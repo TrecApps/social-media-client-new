@@ -1,0 +1,19 @@
+<div 
+    class="container-slider"
+    appElementContainerDirective
+    [ngClass]="isActive() ? 'container-slider-expanded' : 'container-slider-collapse'"
+    [style]="'z-index:'+ zIndex()+ '; max-height:'+ useMaxHeight() +';'"
+>
+    <div class="slider-top-bar">
+        <div class="slider-top-bar-buffer">
+            <ng-content select="top-bar-content"></ng-content>
+        </div>
+        <div class="red-button-container">
+                        
+            <button (click)="onClose.emit()"><img src="assets/icons/X-image.png" alt="exit button"></button>
+        </div>
+    </div>
+    
+    <ng-content [style]="'height: ' + useHeight() + ';'"></ng-content>
+
+</div>

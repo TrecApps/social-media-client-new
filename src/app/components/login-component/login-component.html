@@ -1,0 +1,64 @@
+<div class="container" id="loginContainer" [style.background-color]="color1">
+    <div id="messageJumbo" class="fadeInGradient tc-jumbotron" [style.background]="loginGradient">
+      <h3 class="header-on-mobile" [style.color]=color5>TrecAccount Login...</h3>
+      <div class="section-on-desktop">
+        <h1 [style.color]=color5>TrecApps Account Login</h1>
+        <div id="logoContainer" class="containGlobal">
+          <img class="LoginImage fadeInRight" src="icons/outline.png">
+          <div class="clearfix"></div>
+          <img class="LoginImage-ref-2 fadeInLeftRef" id="Globe1" src="icons/glob-2.png">
+          <img id="Globe2" class="LoginImage-ref fadeInRightRef" src="icons/world-1.png">
+        </div>
+      </div>
+    </div>
+
+
+    <div width="100%" class="form">
+
+        @if(!authMethodEntries()){
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input #usernameControl class="form-control" [(ngModel)]="username">
+                <br>
+                <button class="btn btn-primary" [disabled]="!username().trim().length || checking" (click)="submitUsername()">Submit</button>
+                <button class="btn btn-info" (click)="switchToCreate()">Create Account</button>
+            </div>
+        } @else {
+            <div appElementContainerDirective>
+                @for(entry of nonSelectedMethods; track entry){
+                    <div appElementItemDirective (click)="switchMethodEntry(entry)">
+                        <p><b>Method: </b>{{ entry.name }}</p>
+                        <p><i>Type: </i>{{ entry.type }}</p>
+                    </div>
+                }
+            </div>
+
+            <div appElementContainerDirective>
+                @for(entry of selectedMethods; track entry){
+                    <div appElementItemDirective>
+                        <div class="form-group">
+                            <label>{{entry.name}} -({{entry.type}})</label>
+                            <input class="form-control" [(ngModel)]="entry.code" type="password">
+                            <button class="btn btn-danger" (click)="switchMethodEntry(entry)">Deselect</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div appElementContainerDirective>
+                <div class="form-group">
+                    <label class="form-check-label" for="noExpire" id="noExpireLabel" [style.color]="color3">Stay Logged In (Not recommended on Public Devices)</label><br>
+                    <input class="form-check-input" type="checkbox" id="noExpire" [(ngModel)]="stayLoggedIn" style="margin-left: 0;">
+                    <br>
+                    <button class="btn btn-primary"(click)="submitLogin()" [disabled]="!loginReady">Login</button>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+
+
+
+</div>

@@ -1,0 +1,180 @@
+<app-up-slider-component 
+    #outerSlider
+  style="height: 100%; display:block" 
+  [useMaxHeight]="maxHeight()" 
+  [isActive]="show()" 
+  (onClose)="currentImage.set(undefined); onClose.emit()"
+  [zIndex]="zIndex()"
+>
+
+  <div style="display: flex; flex-direction: column; height: calc(100vh - 37px);">
+    <div appElementContainer>
+      <input style="display: none" type="file" (change)="imageFromDevice($event)" accept="image/png, image/gif, image/jpeg, image/webp, image/svg" #imageInput>
+      <button class="btn btn-info" (click)="imageInput.click()">Image From Device</button>
+      <h3>Albums</h3>
+      @if (addedAlbum()) {
+        <p class="text-danger">Note: Newly created album will not be saved until an image is assigned to it</p>
+      }
+      <div class="album-collection">
+        <div class="album-container" style="margin-right: 10px;" (click)="onAddAlbum()">
+          <img src="assets/plus.png">
+          <span>Add Album</span>
+        </div>
+        @for (album of albumList(); track album) {
+          <div class="album-container" (click)="onSelectAlbum(album)">
+            <img [src]="getAlbumImage(album)">
+            <span>{{ album }}</span>
+            @if (album != filterBy()) {
+              <div class="album-cover"></div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+
+
+    <div class="image-gallery-holder">
+      <div class="image-gallery">
+        @if (app() != 'main') {
+          <div>
+            <input type="checkbox" class="form-check-input" (change)="onShowOnlyApps($event)">
+            <label class="form-check-label">Show only {{app()}} images</label>
+          </div>
+        }
+        @for (image of imageEntries()|imageAlbumFilter:filterBy(); track image) {
+          <div class="image-holder" (click)="onImageClick(image)">
+            <img [src]="image.src" [ngClass]="image.record.deleteOn">
+            @if (image.record.name) {
+              <p class="image-name">{{ image.record.name }}</p>
+            }
+            @if (image.record.deleteOn) {
+              <p class="delete-mark">Marked for Deletion</p>
+            }
+          </div>
+        }
+      </div>
+      @if (!done()) {
+        <button class="btn btn-primary" (click)="retrieveImages()" [disabled]="retrievingImages">More Images</button>
+      }
+    </div>
+  </div>
+
+
+  <app-up-slider-component [zIndex]="20" [isActive]="currentImage() !== undefined && show()" (onClose)="currentImage.set(undefined)" >
+    <div class="current-image" style="height: 90vh;">
+      <div class="current-image-holder">
+        <div class="image-wrapper">
+          <img #selectedImg [src]="currentImage()?.src">
+
+        @if (isCropping()) {
+          <div class="crop-shades" style="top: 0; width: 100%" [ngStyle]="{'height.px': squarePosition().top}"></div>
+        
+          <div class="crop-shades" style="bottom: 0; width: 100%" [ngStyle]="{'top.px': squarePosition().top + squareSize()}"></div>
+        
+          <div class="crop-shades" style="top: 0; left: 0; height: 100%" [ngStyle]="{'width.px': squarePosition().left}"></div>
+        
+          <div class="crop-shades" style="top: 0; right: 0; height: 100%" [ngStyle]="{'left.px': squarePosition().left + squareSize()}"></div>
+          <div class="crop-borders"
+            (mousemove)="onMoveCropBorders($event)"
+            (mousedown)="onDragMouseDown($event)"
+            [ngStyle]="{'left.px': squarePosition().left, 'top.px': squarePosition().top, 'width.px' : squareSize(), 'height.px' : squareSize()}">
+            <div class="crop-resizer" (mousedown)="onResizeStart($event)" (mousemove)="onResizeMove($event)"></div>
+          </div>
+        }
+        </div>
+        
+      </div>
+
+      @if (currentImage()) {
+        <div
+          class="current-image-dashboard form"
+          appElementContainer
+          >
+          <div class="form-group" appElementItem>
+            <label class="form-label">Name</label>
+            <input class="form-control" [value]="getImageName" (input)="setImageName($event)">
+            @if (currentImage()?.record?.id) {
+              <button class="btn btn-primary">Update Name</button>
+            }
+          </div>
+          @if (!currentImage()?.record?.id) {
+            <div class="form-group" appElementItem>
+              <label class="form-label">Upload Mode</label>
+              <select class="form-select" [(ngModel)]="currentUploadMode">
+                @for (uploadOption of uploadModes; track uploadOption) {
+                  <option [ngValue]="uploadOption">{{uploadOption.modeName}}</option>
+                }
+              </select>
+              <P>{{ currentUploadMode().modeExplaination }}</P>
+            </div>
+          }
+          @if (currentImage()?.record?.id) {
+            <div class="form-group" appElementItem>
+              <label class="form-label">Image Visibility</label>
+              <select class="form-select" [(ngModel)]="targetVisibility">
+                @for (visOption of visibilityModes | imageVisibilityFilter:currentImage()?.record; track visOption) {
+                  <option
+                  [ngValue]="visOption.option">{{visOption.optionName}}</option>
+                }
+              </select>
+              <p>{{visibilityModes[targetVisibility()].optionExplaination}}</p>
+              @if (currentVisibility != targetVisibility) {
+                <button class="btn btn-primary" (click)="updateVisibility()">Update Visibility</button>
+              }
+            </div>
+          }
+          <div class="form-group" appElementItem>
+            <input type="checkbox" class="form-check-input"  [(ngModel)]="isCropping" (change)="onCropCheck()">
+            <label class="form-check-label">Use Crop</label>
+            @if (cropChanged() && currentImage()?.record?.id) {
+              <button class="btn btn-submit btn-primary" (click)="onUpdateCrop()">Update Cropping</button>
+            }
+            @if (isCropping()) {
+              <p>{{ `${squarePosition().left},${squarePosition().top},${squarePosition().left + squareSize()},${squarePosition().top + squareSize()}` }}</p>
+            }
+          </div>
+          @if (albumList().items.length) {
+            <div class="form-group" appElementItem>
+              <label class="form-label">Album</label>
+              <select class="form-select" [value]="albums" (change)="albumChanged.set(true)">
+                <option [selected]="setAlbum(undefined)" [value]="undefined">(None)</option>
+                @for (album of albumList(); track album) {
+                  <option [selected]="setAlbum(album)" [value]="[album]">{{album}}</option>
+                }
+              </select>
+              @if (currentImage()?.record?.id && albumChanged()) {
+                <button class="btn btn-primary" (click)="onAssignAlbum()">Update Album</button>
+              }
+            </div>
+          }
+          <div class="form-group" appElementItem>
+            <p>Stats</p>
+            <p><b>Width: </b> {{currentImage()?.record?.width}}</p>
+            <p><b>Height: </b> {{currentImage()?.record?.height}}</p>
+            <p><b>Type: </b> {{currentImage()?.record?.type}}</p>
+          </div>
+          <hr>
+            <div class="form-group" appElementItem>
+              @if (purpose() != defaultPurpose && currentImage()?.record?.id) {
+                <button (click)="selectImage()" class="btn btn-info">Select Image</button>
+              }
+              @if (!currentImage()?.record?.id) {
+                <button (click)="commenceImageUpload()" class="btn btn-primary">Upload Image</button>
+              }
+              <button
+                class="btn"
+                [ngClass]="currentImage()?.record?.deleteOn ? 'btn-white' : 'btn-danger'"
+                (click)="onDeleteCall()">
+                {{ currentImage()?.record?.deleteOn ? 'Cancel Deletion' : 'Delete' }}
+              </button>
+            </div>
+          </div>
+        }
+
+      </div>
+    </app-up-slider-component>
+
+
+
+  </app-up-slider-component>

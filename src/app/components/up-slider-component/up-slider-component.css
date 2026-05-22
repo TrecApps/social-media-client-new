@@ -1,0 +1,63 @@
+.container-slider {
+    position: fixed;
+    bottom: 0;
+    overflow: hidden;
+    transition: height 0.33s;
+}
+
+.container-slider-collapse {
+    height: 0;
+}
+
+.container-slider-expanded {
+    height: auto; /* Below value is not widely supported in some browsers, including Fire-Fox, so this line is provided as a fallback */
+    height: calc-size(auto, size);
+}
+
+@media (max-width:767px) {
+    .container-slider {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .container-slider {
+        left: 10%;
+        right: 10%;
+    }
+}
+
+.slider-top-bar {
+    width: 100%;
+    height: 30px;
+    display: flex;
+}
+
+.slider-top-bar-buffer {
+    height: 100%;
+    flex: 1;
+}
+
+.red-button-container {
+    width: 30px;
+    height: 30px;
+
+    transition: background-color 0.3s;
+}
+
+.red-button-container button img {
+    width: 30px;
+    height: 30px;
+}
+
+.red-button-container button {
+    width:30px;
+    height:30px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+.red-button-container:hover {
+    background-color: red;
+}
