@@ -1,0 +1,15 @@
+.element-item-focus {
+    box-shadow: 0 0 10px 3px #fff;
+}
+
+.tab-holder {
+    margin-bottom: 5px;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.tab-holder .element-item {
+    max-width: 300px;
+    min-width: 80px;
+    margin: 3px;
+}

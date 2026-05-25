@@ -1,0 +1,49 @@
+<app-tab-component [(tabs)]="tabList" (tabSelect)="onTabSelect($event)">
+
+@for(det of connectionDetails; track det){
+
+    <div appElementItem style="display: flex; gap: 5px; padding: 5px;">
+        <div class="profile-holder">
+            <img [src]="imageBase + det.profileDetails.id + '?app=' + app">
+        </div>
+        <div class="profile-details">
+            <p>{{ det.profileDetails.displayName }}
+                @if(det.profileDetails.pronouns){
+                    <span>{{ det.profileDetails.pronouns }}</span>
+                }
+                @if(det.profileDetails.shortAboutMe){
+                    <span>{{ det.profileDetails.shortAboutMe }}</span>
+                }
+            </p>
+        </div>
+        <div style="flex-grow: 1;"></div>
+
+        @if(mode == "connect"){
+            <!-- <button class="btn btn-primary" (click)="prepMessage(det.profileDetails.id)">Message</button> -->
+            <button class="btn btn-danger" (click)="endConnection(det)">End Connection</button>
+        } @else if (mode == 'followee') {
+            <button class="btn btn-danger" (click)="endConnection(det)">Unfollow</button>
+            @if(assessEntry(det).endsWith("-vice")){
+                <p class="grey-message">Follows You</p>
+            }
+        } @else if (mode =='follower') {
+            <p class="grey-message">Follows You</p>
+            @if(assessEntry(det).endsWith("-vice")){
+                <button class="btn btn-danger" (click)="endConnection(det)">Unfollow</button>
+            } @else {
+                <button class="btn btn-primary" (click)="makeConnection(det)">Follow</button>
+            }
+        } @else if(assessEntry(det) == "requester"){
+            <button class="btn btn-primary" (click)="approveConnection(det)">Approve</button>
+            <button class="btn btn-danger" (click)="endConnection(det)">Reject</button>
+        } @else if (assessEntry(det) == "requestee") {
+            <p class="grey-message">Awaiting Response</p>
+            <button class="btn btn-danger" (click)="endConnection(det)">Cancel Request</button>
+        } 
+
+
+    </div>
+
+}
+
+</app-tab-component>

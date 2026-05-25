@@ -1,0 +1,19 @@
+<div
+  class="element-container"
+  [ngClass]="'element-container-' + ss.style"
+  >
+  <div class="tab-holder">
+    @for (tab of tabs(); track tab) {
+      <div
+        class="element-item"
+        [ngClass]="'element-item-' + ss.style +' ' + (tab.active ? 'element-item-focus' : '')"
+        (click)="onSelect(tab)"
+        >
+        <p>{{tab.showTitle}}</p>
+      </div>
+    }
+  </div>
+
+  <ng-content></ng-content>
+
+</div>
