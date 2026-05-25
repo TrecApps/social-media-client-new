@@ -1,0 +1,26 @@
+<div
+  class="popup-background"
+  [ngClass]="'popup-background-' + ss.style"
+  [ngStyle]="{'z-index': zIndex}"
+  >
+  <div [ngStyle]="{'background-color': bgColor}">
+    @if (showXBar) {
+      <div class="slider-top-bar">
+        <div class="slider-top-bar-buffer">
+          <ng-content select="top-bar-content"></ng-content>
+        </div>
+        <div
+          class="red-button-container"
+          >
+          <button (click)="onClose.emit()"><img src="assets/icons/X-image.png" alt="exit button"></button>
+        </div>
+      </div>
+    }
+
+    <div [ngStyle]="{'padding': padding}" style="overflow-y: scroll;">
+      <ng-content></ng-content>
+    </div>
+
+  </div>
+
+</div>
