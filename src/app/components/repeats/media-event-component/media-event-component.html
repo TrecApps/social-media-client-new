@@ -1,0 +1,32 @@
+<div appElementContainerDirective>
+    @if(otherProfile){
+        @if(mediaEvent.type == "COMMENT"){
+            <div appElementItemDirective class="flex-and-center">
+                <p>{{ otherProfile.displayName }} left a comment</p>
+            </div>
+        } @else if (mediaEvent.type == "POST_REACTION" || mediaEvent.type == "COMMENT_REACTION") {
+            <div appElementItemDirective class="flex-and-center">
+                <p>{{ otherProfile.displayName }} Reacted to this...</p>
+            </div>
+        }
+    }
+
+    @if(content){
+        <app-content-component [content]="content" (onPrepReply)="prepReply($event)"/>
+    }
+
+    @if(mediaEvent.parentContentId){
+        <!-- Expecting parent content -->
+        <div appElementItemDirective class="flex-and-center">
+            <p>Which is a comment on</p>
+        </div>
+
+        @if(parentContent) {
+            <app-content-component [content]="parentContent" (onPrepReply)="prepReply($event)"/>
+        } @else {
+            <div class="flex-and-center">
+                <mat-progress-spinner [diameter]="'100px'" [strokeWidth]="'1px'" [mode]="'indeterminate'" />
+            </div>
+        }
+    }
+</div>
