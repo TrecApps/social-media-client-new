@@ -1,33 +1,33 @@
-<div appElementItem>
+<div appElementItemDirective>
     <div class="post-bar" (click)="onEdit()">
         <div class="profile-holder">
-            <img [src]="imageSrc" (error)="imageSrc = defaultImgSrc">
+            <img [src]="imageSrc()" (error)="imageSrc.set(defaultImgSrc)" alt="Profile Picture">
         </div>
         <div class="profile-details" style="flex-grow: 1;">
             <p>
-                <span>{{ content.posterDetails.displayName }}</span>
-                @if(content.posterDetails.pronouns){
-                    <span> - {{ content.posterDetails.pronouns }}</span>
+                <span>{{ content().posterDetails.displayName }}</span>
+                @if(content().posterDetails.pronouns){
+                    <span> - {{ content().posterDetails.pronouns }}</span>
                 }
-                <span> - {{ content.posterDetails.shortAboutMe }}</span>
+                <span> - {{ content().posterDetails.shortAboutMe }}</span>
             </p>
         </div>
         <div class="profile-details" style="text-align: right;">
-            {{ content.posting.made| date:'MMM d, y - h:mm:ss a' }}
+            {{ content().posting.made| date:'MMM d, y - h:mm:ss a' }}
         </div>
     </div>
-    <div class="post-content" [innerHTML]="content.posting.contents.at(-1)?.content| htmlRemover | tcFormatter "></div>
+    <div class="post-content" [innerHTML]="content().posting.contents.at(-1)?.content| htmlRemover | tcFormatter "></div>
     <div class="post-reaction-bar">
 
         <app-reaction-button-component #likeButton
-            [isSelected]="'Like' == activeReaction"
+            [isSelected]="'Like' == activeReaction()"
             [reactionType]="'Like'"
             (onSelectedEmitter)="reactionOnSelect($event)"
             [count]="getReactionInt('Like')"
         ></app-reaction-button-component>
 
         <app-reaction-button-component #dislikeButton
-            [isSelected]="'Dislike' == activeReaction"
+            [isSelected]="'Dislike' == activeReaction()"
             [reactionType]="'Dislike'"
             (onSelectedEmitter)="reactionOnSelect($event)"
             [count]="getReactionInt('Dislike')"
@@ -39,13 +39,13 @@
                 <img src="assets/icons/Dislike-O.png" alt="Disapprove Button">
             </div> -->
     </div>
-    <div appElementItem class="flex-and-center post-divider" (click)="onPrepReply.emit(content)">
+    <div appElementItemDirective class="flex-and-center post-divider" (click)="onPrepReply.emit(content())">
         <p>Reply</p>
     </div>
 
-    @if(hasMore){
-        <div appElementItem class="flex-and-center post-divider" style="min-height: 50px" (click)="getReplies()">
-            @if(retrievingReplies){
+    @if(hasMore()){
+        <div appElementItemDirective class="flex-and-center post-divider" style="min-height: 50px" (click)="getReplies()">
+            @if(retrievingReplies()){
                 <mat-progress-spinner 
                     [mode]="'indeterminate'"
                     [color]="'rgb(100, 100, 255)'"
@@ -60,14 +60,14 @@
     }
 
 
-    @if(content.replies.length && showFull){
+    @if(content().replies.length && showFull){
     
-    <div appElementContainer>
+    <div appElementContainerDirective>
 
-        @for(reply of content.replies; track reply){
+        @for(reply of content().replies; track reply){
             <app-content-component 
                 [content]="reply" 
-                [parent]="content.posting"
+                [parent]="content().posting"
                 (onPrepReply)="onPrepReply.emit($event)"
             />
         }

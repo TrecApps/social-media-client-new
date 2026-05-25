@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
 import { HtmlRemoverPipe } from '../../../pipes/html-remover.pipe';
 import { TcFormatterPipe } from '../../../pipes/tc-formatter.pipe';
 import { ContentService } from '../../../services/content-service';
@@ -25,8 +25,8 @@ import { FullPosting, Posting } from '../../../models/Content';
 })
 export class ContentComponent implements AfterViewInit{
 
-    @Input()
-  content: FullPosting = {
+
+  content: ModelSignal<FullPosting> = model({
     posting: {
       id: '1',
       parents: [],
@@ -53,10 +53,10 @@ export class ContentComponent implements AfterViewInit{
     moduleName: undefined,
     ownerName: undefined,
     replies: []
-  }
+  } as FullPosting);
 
-  page: number = 0;
-  size: number = 5;
+  page: WritableSignal<number> = signal(0);
+  size: WritableSignal<number> = signal(5);
 
 
 
@@ -71,12 +71,12 @@ export class ContentComponent implements AfterViewInit{
   onPrepReply: EventEmitter<FullPosting> = new EventEmitter<FullPosting>();
 
 
-  hasMore: boolean = true;
+  hasMore: WritableSignal<boolean> = signal(true);
 
-  activeReaction: string = "";
+  activeReaction: WritableSignal<string> = signal("");
 
   defaultImgSrc: string = 'non-profile.png';
-  imageSrc: string = this.defaultImgSrc;
+  imageSrc: WritableSignal<string> = signal(this.defaultImgSrc);
 
   constructor(
     private contentService: ContentService,
@@ -88,14 +88,14 @@ export class ContentComponent implements AfterViewInit{
   reactions: RObjectMap = {}
 
   getContentPoster(): string {
-    return this.content.posting.posterId || this.content.posting.ownerId || '';
+    return this.content().posting.posterId || this.content().posting.ownerId || '';
   }
 
   ngAfterViewInit(): void {
 
-    this.imageSrc = `${environment.image_service_url}Images/profile/${this.getContentPoster()}?app=${environment.app_name}`;
+    this.imageSrc.set(`${environment.image_service_url}Images/profile/${this.getContentPoster()}?app=${environment.app_name}`);
 
-    this.reactionService.getReaction(this.content.posting.id).subscribe({
+    this.reactionService.getReaction(this.content().posting.id).subscribe({
       next: (obj: ResponseObj) => {
         this.processReactionStats(obj);
       }
@@ -104,27 +104,27 @@ export class ContentComponent implements AfterViewInit{
 
   onEdit(){
     this.contentService.edit = {
-      text: this.content.posting.contents.at(-1)?.content || "",
-      moduleId: this.content.posting.moduleId,
-      contentId: this.content.posting.id,
-      profileId: this.content.posting.ownerId
+      text: this.content().posting.contents.at(-1)?.content || "",
+      moduleId: this.content().posting.moduleId,
+      contentId: this.content().posting.id,
+      profileId: this.content().posting.ownerId
     }
     this.contentService.parent = this.parent;
 
   }
 
-  retrievingReplies: boolean = false;
+  retrievingReplies: WritableSignal<boolean> = signal(false);
   getReplies() {
-    if(this.retrievingReplies) return;
-    this.retrievingReplies = true;
-    this.contentService.getReplies(this.content.posting.id, this.page, this.size).subscribe({
+    if(this.retrievingReplies()) return;
+    this.retrievingReplies.set(true);
+    this.contentService.getReplies(this.content().posting.id, this.page(), this.size()).subscribe({
       next:(replies: Posting[]) => {
-        this.retrievingReplies = false;
+        this.retrievingReplies.set(false);
 
         replies.forEach((reply: Posting) => {
-          this.profileService.addFullPostingToList(this.content.replies, reply);
+          this.profileService.addFullPostingToList(this.content().replies, reply);
         })
-      }, error: () => this.retrievingReplies = false
+      }, error: () => this.retrievingReplies.set(false)
     })
   }
 
@@ -132,14 +132,14 @@ export class ContentComponent implements AfterViewInit{
     if(obj.status >= 300 || !obj.reactStats) return;
 
     let reactStats = obj.reactStats;
-    this.activeReaction = reactStats.yourReaction || '';
+    this.activeReaction.set(reactStats.yourReaction || '');
     this.reactions = reactStats.reactions;
   }
 
   reactionOnSelect(event: ReactionEvent){
-    this.reactionService.postReaction(event.type, this.content.posting.id).subscribe({
+    this.reactionService.postReaction(event.type, this.content().posting.id).subscribe({
       next: (obj: ResponseObj) => {
-        this.activeReaction = event.type;
+        this.activeReaction.set(event.type);
         this.processReactionStats(obj);
       }
     })
