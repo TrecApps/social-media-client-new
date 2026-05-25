@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../../services/auth-service';
 import { FormsModule } from '@angular/forms';
-import { AuthAttempt, AuthMethodType, AuthRecordPublic } from '../../models/account';
+import { AuthAttempt, AuthMethodType, AuthRecordPublic } from '../../../models/account';
 import { NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { GlobalConstants } from '../../common/GlobalConstants';
+import { GlobalConstants } from '../../../common/GlobalConstants';
 import { Subscription } from 'rxjs';
-import { ElementContainerDirective } from '../../directives/element-container-directive';
-import { ElementItemDirective } from '../../directives/element-item-directive';
+import { ElementContainerDirective } from '../../../directives/element-container-directive';
+import { ElementItemDirective } from '../../../directives/element-item-directive';
 
 
 class AuthRecordEntry {
