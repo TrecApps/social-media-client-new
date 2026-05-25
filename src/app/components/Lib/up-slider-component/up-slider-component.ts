@@ -1,6 +1,6 @@
 import { Component, EventEmitter, input, Input, InputSignal, Output } from '@angular/core';
 import { NgClass } from '@angular/common';
-import { ElementContainerDirective } from '../../directives/element-container-directive';
+import { ElementContainerDirective } from '../../../directives/element-container-directive';
 
 @Component({
   selector: 'app-up-slider-component',

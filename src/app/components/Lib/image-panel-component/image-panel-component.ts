@@ -1,13 +1,13 @@
 import { Component, ElementRef, EventEmitter, HostListener, input, Input, InputSignal, Output, signal, ViewChild, WritableSignal } from '@angular/core';
-import { ImageUploadMode, ImageEntry, ImageVisibilityOption, ImageVisibility, ImageRecord, ImageState } from '../../models/images';
-import { SortedList } from '../../models/SortedList';
-import { ImageService } from '../../services/image-service';
-import { ResponseObj } from '../../models/standard';
-import { environment } from '../../environment/environment';
+import { ImageUploadMode, ImageEntry, ImageVisibilityOption, ImageVisibility, ImageRecord, ImageState } from '../../../models/images';
+import { SortedList } from '../../../models/SortedList';
+import { ImageService } from '../../../services/image-service';
+import { ResponseObj } from '../../../models/standard';
+import { environment } from '../../../environment/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ImageAlbumFilterPipe } from '../../pipes/image-album-filter-pipe';
-import { ImageVisibilityFilterPipe } from '../../pipes/image-visibility-filter-pipe-pipe';
+import { ImageAlbumFilterPipe } from '../../../pipes/image-album-filter-pipe';
+import { ImageVisibilityFilterPipe } from '../../../pipes/image-visibility-filter-pipe-pipe';
 import { UpSliderComponent } from '../up-slider-component/up-slider-component';
 
 interface ImageUploadModeOption {

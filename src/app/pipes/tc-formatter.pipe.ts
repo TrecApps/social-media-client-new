@@ -46,7 +46,7 @@ export class TcFormatterPipe implements PipeTransform {
       if(slice.length > 1){
         let id = slice.at(1);
         let preText = value.substring(0, startIndex);
-        let repText = `<img src="${environment.image_service_url_2}Images/public/${id}">`;
+        let repText = `<img src="${environment.image_service_url}Images/public/${id}">`;
         let postText = value.substring(endIndex);
 
         value = `${preText}${repText}${postText}`;
