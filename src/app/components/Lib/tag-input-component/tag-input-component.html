@@ -1,0 +1,16 @@
+<div class="form-group">
+  <label>Tags (Enter/Return to add Tag)</label>
+  <input class="form-control" type="text" [(ngModel)]="curTag" (keyup.enter)="addTag()">
+  @if (tags().length) {
+    <div class="tag-container">
+      @for (tag of tags(); track tag) {
+        <div class="tag-base">
+          <p>{{ tag }}</p>
+          <div class="tag-x-container" (click)="removeTag(tag)">
+            <p>X</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

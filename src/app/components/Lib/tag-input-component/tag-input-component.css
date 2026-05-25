@@ -1,0 +1,40 @@
+.tag-container {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 5px;
+
+    border-radius: 10px;
+    border-color: darkgray;
+    border-style: solid;
+    padding:5px;
+}
+
+.tag-base {
+    border-radius: 10px;
+    height: 25px;
+    background-color: darkturquoise;
+    display: flex;
+    flex-direction: row;
+}
+
+.tag-base > p {
+    margin: auto;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.tag-x-container {
+    height:25px;
+    width: 25px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.tag-x-container > p {
+    margin: auto;
+    margin-left: 8px;
+}
+
+.tag-x-container:hover {
+    background-color: red;
+}
