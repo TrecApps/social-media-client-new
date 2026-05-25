@@ -1,0 +1,106 @@
+<div appElementContainerDirective style="min-width: 70vw; max-height: 95vh; overflow-y: scroll;">
+    <h3>Work Experience</h3>
+
+    @if (isOwned && !isEditing){
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = true">Edit Experience</button>
+    }
+
+    @if(!isEditing){
+        <div appElementItemDirective>
+            <h4>Basic Info</h4>
+            <p><b>Type: </b>{{ experience().type }}</p>
+            <p><b>Employer: </b>{{ experience().employerName }}</p>
+            <p>{{ experience().startDate | date:'MMM y' }} - {{ experience().endDate ? (experience().endDate | date:'MMM y') : '(ongoing)'}} </p>
+            @if(experience().title){
+                <p><b>Title: </b>{{ experience().title }}</p>
+            }
+
+        </div>
+
+        @if(experience().description){
+            <div appElementItemDirective>
+                <p><b>Description: </b>{{ experience().description }}</p>
+            </div>
+        }
+
+        <div appElementItemDirective>
+            <h4>Experiences</h4>
+        </div>
+
+        @if(experience().shortSubExperience){
+            <div appElementItemDirective>
+                <p><b>Experiences: </b>{{ experience().shortSubExperience }}</p>
+            </div>
+        }
+
+        @for(subExp of experience().subExperience; track subExp) {
+            <div appElementItemDirective>
+                @if(subExp.title){
+                    <p><b>Title: </b>{{ subExp.title }}</p>
+                }
+                <p>{{ subExp.startDate | date:'MMM y' }} - {{ subExp.endDate ? (subExp.endDate | date:'MMM y') : '(ongoing)'}} </p>
+            </div>
+        }
+    }
+
+    @if (isOwned && isEditing){
+    <div appElementItemDirective>
+        <h4>Details</h4>
+        <div class="form-group">
+            <label>Work Type</label>
+            <select class="form-select" [(ngModel)]="experience().type">
+                <option [ngValue]="'FULL_TIME'">Full Time</option>
+                <option [ngValue]="'PART_TIME'">Part Time</option>
+                <option [ngValue]="'CONTRACT'">Contract</option>
+                <option [ngValue]="'FREELANCE'">Freelance</option>
+                <option [ngValue]="'INDEPENDENT'">Independent</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Employer Name</label>
+            <input class="form-control" [(ngModel)]="experience().employerName">
+        </div>
+
+        <div class="form-group">
+            <label>Start Date</label>
+            <input class="form-control" type="date" [(ngModel)]="experience().startDate">
+        </div>
+        <div class="form-group">
+            
+            <input type="checkbox" class="form-check-input"
+                (change)="onCurrentWorkHere($event.target.checked)">
+            <label class="form-check-label">I currently work here</label><br>
+            @if(experience().endDate){
+            <label>End Date</label>
+
+            
+                <input class="form-control" type="date" [(ngModel)]="experience().endDate">
+            }
+
+        </div>
+
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" [(ngModel)]="experience().title">
+        </div>
+
+    </div>
+
+    <div appElementItemDirective> 
+        <h4>Experience</h4>
+        <div class="form-group">
+            <label>Description (for this whole entry)</label>
+            <textarea class="form-control" [(ngModel)]="experience().description"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Sub-Description (into sub-entries)</label>
+            <textarea class="form-control" [(ngModel)]="experience().shortSubExperience"></textarea>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = false">Stop Edits</button>
+    }
+
+
+</div>

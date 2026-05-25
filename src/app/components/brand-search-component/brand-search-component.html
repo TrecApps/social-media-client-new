@@ -1,0 +1,28 @@
+<div class="form-group searcher-group">
+  <label>{{ label }}</label>
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="query"
+    (input)="onInputChange()"
+    [ngModelOptions]="{standalone: true}"
+    >
+    @if (showOptions) {
+      <div style="display: relative">
+        <div class="option-holder" appElementContainer>
+          @for (brand of entries(); track brand) {
+            <div class="brand-option" (click)="onBrandSelected(brand)" appElementItem>
+              <div class="brand-img-holder">
+                <img [src]="brand.image">
+              </div>
+              <div class="brand-name-holder">
+                <h5 class="brand-name">{{ brand.brand.names[0] }}</h5>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+
+  </div>

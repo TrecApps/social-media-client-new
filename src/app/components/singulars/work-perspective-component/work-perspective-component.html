@@ -1,0 +1,93 @@
+<div appElementContainerDirective class="form" style="min-width: 80vw; max-height: 95vh; overflow-y: scroll;">
+    @if(isOwned && !isEditing){
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = true">Edit Perspective</button>
+    }
+
+    @if(!isEditing){
+        <div appElementItemDirective>
+            <p><b>Perspective: </b> 
+            @for(p of perspective().perspective; track p){
+                @if($index){
+                    <span>, </span>
+                }
+                <span>{{ p }}</span>
+            }
+            
+            </p>
+        </div>
+    }
+
+    @if(isOwned && isEditing){
+    <div appElementItemDirective>
+        <h2>Work Perspective</h2>
+        <div class="form-group">
+            <label>Perspective</label>
+            <app-tag-input-component [(tags)]="perspective().perspective" />
+        </div>
+        <div class="form-group">
+            <label>Visibility</label>
+            <select class="form-select" [(ngModel)]="perspective().showExperiences">
+                @for(featureOpt of featureShowOptions; track featureOpt){
+                
+                <option [ngValue]="featureOpt">{{featureOpt}}</option>
+                
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="form-check-input" 
+                (change)="perspective().allowAnalytics = $event.target.checked">
+            <label class="form-check-label">Allow Analytics</label>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = false">Stop Edits</button>
+    </div>
+    }
+    
+    <div style="height: 5px" appElementItemDirective></div>
+    <div appElementItemDirective>
+        <h3>Work Experiences</h3>
+        <button class="btn btn-primary" (click)="addExperience()">Add Experience</button>
+    </div>
+
+    @for (exp of perspective().workExperience; track exp) {
+
+    <div appElementItemDirective (click)="activeExperience = exp">
+        <p>
+            <b>Employer: </b>{{ exp.employerName ? exp.employerName : 'N.A.' }} 
+            @if(exp.title.length){
+                <span><b>Title: </b>{{ exp.title }}</span>
+            }
+            {{ exp.type }}</p>
+            <p><b>Start: </b>{{ exp.startDate | date:'MMM y' }}
+            @if(exp.endDate){
+                <span><b>End: </b>{{ exp.endDate | date:'MMM y' }}</span>
+            } @else {
+                <span>(ongoing)</span>
+            }
+        </p>
+            
+    </div>
+
+    
+    }
+    @if(isOwned){
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="onUpdate.emit()">Update</button>
+        <button class="btn btn-danger" style="width: 100%; margin: 5px;" (click)="onDelete.emit()">Remove</button>
+    }
+
+</div>
+
+@if(activeExperience){
+
+    <app-popup-component  (onClose)="activeExperience = undefined" >
+
+        <app-work-experience-component [isOwned]="isOwned"
+            [(experience)]="activeExperience"
+        />
+
+            
+    
+    </app-popup-component>
+
+
+}

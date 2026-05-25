@@ -7,6 +7,7 @@ export const environment = {
     image_service_url: "http://localhost:4200/Image-man-api",
     sm_profile_url: 'http://localhost:4200/sm-api/',
     sm_content_url: 'http://localhost:4200/sm-api/',
+    resource_service_url: "http://localhost:4200/Falsehoods-api/",
 
     // user_service_url: "https://test.trecapps.com/User-api",
     // image_service_url: "https://test.trecapps.com/Image-man-api"
