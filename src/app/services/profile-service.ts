@@ -206,21 +206,21 @@ export class ProfileService {
       ownerName: undefined,
       replies: []
     };
-    let posterDetails = JSON.parse(this.getDisplayName(posting.profilePoster) || "{}");
+    let posterDetails = JSON.parse(this.getDisplayName(posting.posterId) || "{}");
     if(posterDetails.id && posterDetails.displayName){
       fullPosting.posterDetails = posterDetails;
     } else {
-      this.updateDisplayName(posting.profilePoster, (val: BasicProfile) => {
+      this.updateDisplayName(posting.posterId, (val: BasicProfile) => {
         fullPosting.posterDetails = val;
       })
     }
 
-    if(posting.profileOwner){
-      let profileOwner = JSON.parse(this.getDisplayName(posting.profileOwner) || "{}");
+    if(posting.ownerId){
+      let profileOwner = JSON.parse(this.getDisplayName(posting.ownerId) || "{}");
       if(profileOwner.id && profileOwner.displayName){
         fullPosting.ownerName = profileOwner;
       } else {
-        this.updateDisplayName(posting.profileOwner, (val: BasicProfile) => {
+        this.updateDisplayName(posting.ownerId, (val: BasicProfile) => {
           fullPosting.ownerName = val;
         })
       }
@@ -245,21 +245,21 @@ export class ProfileService {
       ownerName: undefined,
       replies: []
     };
-    let posterDetails = JSON.parse(this.getDisplayName(posting.profilePoster) || "{}");
+    let posterDetails = JSON.parse(this.getDisplayName(posting.posterId) || "{}");
     if(posterDetails.id && posterDetails.displayName){
       fullPosting.posterDetails = posterDetails;
     } else {
-      this.updateDisplayName(posting.profilePoster, (val: BasicProfile) => {
+      this.updateDisplayName(posting.posterId, (val: BasicProfile) => {
         fullPosting.posterDetails = val;
       })
     }
 
-    if(posting.profileOwner){
-      let profileOwner = JSON.parse(this.getDisplayName(posting.profileOwner) || "{}");
+    if(posting.ownerId){
+      let profileOwner = JSON.parse(this.getDisplayName(posting.ownerId) || "{}");
       if(profileOwner.id && profileOwner.displayName){
         fullPosting.ownerName = profileOwner;
       } else {
-        this.updateDisplayName(posting.profileOwner, (val: BasicProfile) => {
+        this.updateDisplayName(posting.ownerId, (val: BasicProfile) => {
           fullPosting.ownerName = val;
         })
       }

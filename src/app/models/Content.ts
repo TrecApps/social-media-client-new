@@ -30,13 +30,12 @@ export interface Posting {
     id: string;          // ID of the posting
 
     parents: string[]; // Parents (Posting is a comment if non-empty)
+    parent: string | undefined;
 
+    posterId: string;          // Account ID of the poster
+    userAccountId: string;   // User Account that posted it
 
-
-    userId: string | undefined;          // User Id of who posted it (undefined if use has configured user Id to be withheld)
-    profilePoster: string;   // Profile ID of who posted it (identical to userId if no brand used)
-
-    profileOwner: string | undefined;    // Populated only if poster directs it to another profile
+    ownerId: string | undefined;       // Populated only if poster directs it to another profile
 
     moduleId: string | undefined;        // If part of a group, which group this belongs to
 

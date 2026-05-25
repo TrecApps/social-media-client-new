@@ -1,0 +1,11 @@
+
+
+<div [class]="divClass" (click)="onSelected()">
+    <img [src]="'reactions/' + reactionType +'-'+ (isSelected ? 'S' : 'O') +'.png'" [alt]="reactionType + 'Button'">
+    <div class="reaction-count-holder">
+        @if(count){
+            <p>{{count}}</p>
+        }
+        
+    </div>
+</div>

@@ -1,16 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
-import { ElementContainerDirective, ElementItemDirective, ResponseObj, RObjectMap } from '@tc/tc-ngx-general';
-import { FullPosting, Posting } from '../../../models/Content';
-import { BasicProfile } from '../../../models/Profile';
 import { HtmlRemoverPipe } from '../../../pipes/html-remover.pipe';
 import { TcFormatterPipe } from '../../../pipes/tc-formatter.pipe';
-import { ContentService } from '../../../services/content';
+import { ContentService } from '../../../services/content-service';
 import { ReactionButtonComponent, ReactionEvent } from '../reaction-button-component/reaction-button-component';
-import { ReactionService } from '../../../services/reaction';
+import { ReactionService } from '../../../services/reaction-service';
 import { environment } from '../../../environment/environment';
-import { ProfileService } from '../../../services/profile';
+import { ProfileService } from "../../../services/profile-service"
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ElementContainerDirective } from '../../../directives/element-container-directive';
+import { ElementItemDirective } from '../../../directives/element-item-directive';
+import { ResponseObj, RObjectMap } from '../../../models/standard';
+import { FullPosting, Posting } from '../../../models/Content';
 
 @Component({
   selector: 'app-content-component',
@@ -29,9 +30,7 @@ export class ContentComponent implements AfterViewInit{
     posting: {
       id: '1',
       parents: [],
-      userId: undefined,
-      profilePoster: '',
-      profileOwner: undefined,
+
       moduleId: undefined,
       made: new Date(),
       deleteSet: undefined,
@@ -39,7 +38,11 @@ export class ContentComponent implements AfterViewInit{
         content: 'Hello Operator',
         made: new Date(),
         version: ''
-      }]
+      }],
+      parent: undefined,
+      posterId: '',
+      userAccountId: '',
+      ownerId: undefined
     },
     posterDetails: {
       id: '',
@@ -85,12 +88,12 @@ export class ContentComponent implements AfterViewInit{
   reactions: RObjectMap = {}
 
   getContentPoster(): string {
-    return this.content.posting.profilePoster || this.content.posting.profileOwner || '';
+    return this.content.posting.posterId || this.content.posting.ownerId || '';
   }
 
   ngAfterViewInit(): void {
 
-    this.imageSrc = `${environment.image_service_url_2}Images/profile/${this.getContentPoster()}?app=${environment.app_name}`;
+    this.imageSrc = `${environment.image_service_url}Images/profile/${this.getContentPoster()}?app=${environment.app_name}`;
 
     this.reactionService.getReaction(this.content.posting.id).subscribe({
       next: (obj: ResponseObj) => {
@@ -104,7 +107,7 @@ export class ContentComponent implements AfterViewInit{
       text: this.content.posting.contents.at(-1)?.content || "",
       moduleId: this.content.posting.moduleId,
       contentId: this.content.posting.id,
-      profileId: this.content.posting.profileOwner
+      profileId: this.content.posting.ownerId
     }
     this.contentService.parent = this.parent;
 
