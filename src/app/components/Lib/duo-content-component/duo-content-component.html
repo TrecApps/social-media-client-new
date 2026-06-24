@@ -1,0 +1,23 @@
+<div class="duo-holder" [style]="'gap:' + flexGap + ';'" appElementContainer>
+
+    <div class="duo-right-holder" appElementItem [style]="'max-width: ' + rightMaxWidth">
+        <h3 (click)="mobileShowRight.set(!mobileShowRight())" class="expand_header">
+            <img 
+                [class.rotate-expanded]="mobileShowRight()"
+                id="exp1" 
+                class="expand_icon expand_i_reg rotate" src="assets/Less_than.png">
+            {{ mainText }}
+        </h3>
+
+        <div class="translate" [class.translate-expanded]="mobileShowRight()">
+
+            <ng-content select="right-content"></ng-content>
+
+        </div>
+    </div>
+    <div class="duo-left-holder" appElementItem [style]="'min-width: ' + minWIdth + '; max-width: ' + leftMaxWidth">
+
+        <ng-content></ng-content>
+
+    </div>
+</div>

@@ -1,0 +1,34 @@
+img.expand_icon {
+    border-radius: 50%;
+    transform:rotate(180deg);
+}
+
+img.expand_i_small {
+    width: 25px;
+    height: 25px;
+}
+
+img.expand_i_reg {
+    width: 30px;
+    height: 30px;
+}
+
+@media (min-width: 768px) {
+    img.expand_icon {
+        display: none;
+    }
+    .duo-holder {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .duo-right-holder {
+        flex-grow: 1;
+    }
+
+    .duo-left-holder {
+        flex-grow: 1;
+    }
+
+
+}

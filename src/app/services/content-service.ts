@@ -4,7 +4,7 @@ import { ContentPost, ContentPut, Posting } from "../models/Content";
 import { Observable } from 'rxjs';
 import { environment } from '../environment/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ResponseObj } from '../models/standard';
+import { ResponseObj } from '../models/ResponseObj';
 import { AuthService } from './auth-service';
 
 export class ContentEdit {
