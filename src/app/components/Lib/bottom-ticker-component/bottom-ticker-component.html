@@ -1,0 +1,16 @@
+<div class="ticker-holder" [style]="'height:' + useHeight" appElementItem>
+    @if(stillMore){
+
+        <div class="spinner-holder"  #postsListBottom>
+            <mat-progress-spinner 
+              [mode]="'indeterminate'"
+              [diameter]="spinnerDiameter"
+              [strokeWidth]="spinnerThickness"
+            ></mat-progress-spinner>
+        </div>
+
+    } @else {
+        <p>{{ displayText }}</p>
+    }
+
+</div>
