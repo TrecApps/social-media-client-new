@@ -1,8 +1,9 @@
 import { Component, ElementRef, EventEmitter, input, Input, InputSignal, Output, ViewChild } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-bottom-ticker-component',
-  imports: [],
+  imports: [MatProgressSpinnerModule],
   templateUrl: './bottom-ticker-component.html',
   styleUrl: './bottom-ticker-component.css',
 })
