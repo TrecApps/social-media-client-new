@@ -2,6 +2,7 @@
 
 export const environment = {
     app_name: "Coffeeshop",
+  logo_image: "Logos/Coffee-Shop-Logo.png",
 
     user_service_url: "http://localhost:4200/User-api",
     image_service_url: "http://localhost:4200/Image-man-api",
