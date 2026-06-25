@@ -1,0 +1,48 @@
+<app-nav-bar-component
+  #navBar
+  [navOptions]="navOptions"
+  (onNav)="onNavigate($event)"
+  (onLoginRequestEmitter)="prepLogin()"
+  [basicImageUrl]="'https://test.trecapps.com/Images-api/Images/profile/'"
+  [items]="profileItemGroups"
+  (onProfileItemClicked)="onProfilePanelSelect($event)"
+  [blankProfileImg]="'non-profile.png'"
+  [logoSrc]="logo"
+  [baseUserUrl]="'https://test.trecapps.com/Users'"
+>
+
+  <app-search-bar-component></app-search-bar-component>
+
+  <!-- @if (authService.tcUser) {
+    <profile-ext class="flex-and-center">
+      <p><b>Credibility: </b> {{ authService.tcUser.credibilityRating }}</p>
+    </profile-ext>
+  } -->
+</app-nav-bar-component>
+@if (showStylePopup) {
+  <app-popup-component (onClose)="showStylePopup = false">
+    <app-color-panel (onColorSelect)="onColorSelect($event)"
+    [colors]="colorList"></app-color-panel>
+    <div class="form-group">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        (change)="onUseDarkChecked($event)"
+      >
+      <label class="form-check-label">Use Dark mode</label>
+      <div class="element-item" [ngClass]="'element-item-' + ss.style" style="height: 10px"></div>
+      @if (authService.account) {
+        <button [disabled]="!colorChanged" class="btn btn-primary" (click)="updateStyle()"> Persist Style</button>
+      }
+    </div>
+  </app-popup-component>
+}
+
+
+<!-- @if(showNotifications) {
+  <app-popup (onClose)="showNotifications = false">
+    <app-notification-list-component [useNotifyFilter]="useNotifyFilter" />
+  </app-popup>
+} -->
+
+  <div class="buffer-bar"></div>

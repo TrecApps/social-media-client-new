@@ -1,0 +1,29 @@
+<div class="form-group searcher-group">
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="query"
+    (input)="searchProfiles()"
+    (click)="onGainFocus($event)"
+    [ngModelOptions]="{standalone: true}"
+    >
+    @if (profileResults().length) {
+      <div style="display: relative">
+        <div class="option-holder">
+          @for (profile of profileResults(); track profile) {
+            <div class="brand-option element-item" [ngClass]="'element-item-' + styleService.style" (click)="switchToProfile(profile)">
+              <div class="brand-img-holder">
+                <img [src]="imageBase + '/Images/profile/' + profile.id + '?app=' +app">
+              </div>
+              <div class="brand-name-holder">
+                <h5 class="brand-name">{{ profile.displayName }}</h5>
+                <p>{{ profile.shortAboutMe }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+
+  </div>
