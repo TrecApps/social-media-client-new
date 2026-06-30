@@ -1,1 +1,89 @@
-<p>home-component works!</p>
+<app-top-bar-component>
+
+</app-top-bar-component>
+
+<div style="height: 50px;"></div>
+
+<div class="home-page">
+
+    <div class="home-right-container">
+
+        <div class="home-profile-area" appElementContainer>
+            <div class="home-profile-top">
+                <div class="home-profile-pic-holder">
+                    <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
+                </div>
+            </div>
+
+            <div class="home-profile-pic-buffer"></div>
+
+            <div class="home-profile-name-holder" appElementItem>
+                <p>{{ profileService.activeProfile()?.title + getPronouns() }}</p>
+            </div>
+
+            @if(profileService.activeProfile()){
+
+            <div class="home-profile-detail-holder" appElementItem>
+                <p>{{ profileService.activeProfile()?.aboutMeShort }}</p>
+            </div>
+
+            <div class="home-profile-detail-holder" appElementItem>
+                <p>{{ profileService.activeProfile()?.aboutMe }}</p>
+            </div>
+
+            }
+
+        </div>
+
+
+        <!-- <div *ngIf="throttleService.throttleData" class="d-bordered" style="background-color: azure;">
+            <p *ngIf="throttleService.throttleData.nextPost; else posts_left"><b>Time to next Post:</b> {{ throttleService.throttleData.nextPost }}</p>
+            <ng-template #posts_left>
+                <p><b>Posts left Today:</b> {{throttleService.throttleData.postsLeftByDay}}</p>
+                <p><b>Posts left This Week:</b> {{throttleService.throttleData.postsLeftByWeek}}</p>
+            </ng-template>
+            <hr>
+            <p *ngIf="throttleService.throttleData.nextComment; else comments_left"><b>Time to next Comment:</b> {{ throttleService.throttleData.nextComment }}</p>
+            <ng-template #comments_left>
+                <p><b>Comments left Today:</b> {{throttleService.throttleData.commentsLeftByDay}}</p>
+                <p><b>Comments left This Week:</b> {{throttleService.throttleData.commentsLeftByWeek}}</p>
+            </ng-template>
+            <hr>
+            <p *ngIf="throttleService.throttleData.nextReaction; else reactions_left"><b>Time to next Comment:</b> {{ throttleService.throttleData.nextReaction }}</p>
+            <ng-template #reactions_left>
+                <p><b>Reactions left Today:</b> {{throttleService.throttleData.reactionsLeftByDay}}</p>
+                <p><b>Reactions left This Week:</b> {{throttleService.throttleData.reactionsLeftByWeek}}</p>
+            </ng-template>
+        </div> -->
+
+    </div>
+
+
+    <div appElementContainer class="home-middle-container ">
+
+        <div class="item-button" appElementItem (click)="prepareNewPosting()">
+            <p>Post to Profile</p>
+        </div>
+
+        @for(mediaEvent of mediaEvents; track mediaEvents){
+            <app-media-event-component [mediaEvent]="mediaEvent" (onPrepReply)="handlePrepReply($event)"/>
+        }
+
+        <app-bottom-ticker-component 
+            [stillMore]="!outOfPosts"
+            (onAppear)="retrievePosts(false)"
+        />
+    </div>
+
+    <div class="home-left-container">
+        <app-connection-list-component />
+    </div>
+</div>
+
+
+
+<app-content-editor-component
+    [edit]="edit"
+    [parent]="parent"
+    (onPosted)="handlePostResult($event)"
+/>

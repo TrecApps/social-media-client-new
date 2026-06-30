@@ -1,0 +1,152 @@
+.main-panel {
+    border-radius: 2px;
+    min-height: 200px;
+    max-height: 600px;
+    width: 100%;
+    background-size: 100%;
+    background-position: center;
+    position:absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.main-area {
+    position:relative;
+    background-color: black;
+    overflow: visible;
+    display: inline-block;
+    width: 100%;
+}
+
+.set-cover-wrap {
+    left: 10px;
+    bottom: 10px;
+}
+
+.set-profile-wrap {
+    right: 10px;
+    bottom: 10px;
+}
+
+.profile-container {
+	min-width: 100px;
+	max-width: 250px;
+	max-height: 250px;
+	display: flexbox;
+	justify-content: center;
+	align-items: center;
+	clip-path: circle();
+    top: 50%;
+    position: relative;
+}
+
+@media (max-width:767px) {
+    .profile-container {
+        width: 33%;
+    }
+
+    .pic-b-desktop {
+        display: none;
+    }
+}
+
+@media (min-width:768px) {
+    .pic-m-desktop {
+        display: none;
+    }
+}
+
+.profile-container img {
+    min-width: 100px;
+	max-width: 250px;
+	max-height: 250px;
+    height: auto;
+}
+
+.pic-button {
+    bottom: 5%;
+    position:relative;
+}
+
+.buffer {
+    height: 125px;
+}
+
+.profile-pic-buffer {
+    min-height: 125px;
+}
+
+.third-width {
+    width: 33%;
+}
+
+/* Here, we are under the top panel and ready to show Profile Details and Posts by the User */
+
+.profile-details-section{
+    min-width: 320px;
+    flex-grow: 1;
+    margin: 0 2%;
+    max-width: 750px;
+}
+
+.details-selection-section {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.details-selection {
+    background-color: aqua;
+    padding: 5px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: 5px;
+}
+
+.details-selection:hover {
+    background-color: aliceblue;
+}
+
+.posts-section {
+    min-width: 320px;
+    max-width: 750px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0 2%;
+    columns: 1;
+    align-content: center;
+}
+
+.favorites-list {
+    border-color: darkred;
+    border-style: solid;
+    background-color: khaki;
+    width: 100%;
+    min-height: 30px;
+    margin: 2px;
+    display: flex;
+    flex-direction: row;
+}
+
+.favorites-display {
+    left: 5px;
+    padding:3px;
+    flex-grow: 1;
+
+}
+
+
+/* Set backup profile and cover images */
+
+.cover-img:before {
+    background-image: url("/Coffeeshop/assets/icons/non-cover.png");
+}
+
+.profilePic:before {
+    background-image: url("/Coffeeshop/assets/icons/non-profile.png");
+}
+
+

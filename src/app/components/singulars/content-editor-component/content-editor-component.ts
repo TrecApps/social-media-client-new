@@ -57,7 +57,7 @@ export class ContentEditorComponent implements OnInit {
 
   showError: boolean = false;
 
-  onTextEdit(event: InputEvent){
+  onTextEdit(event: Event){
     let edit = this.edit();
     if(!edit) return;
 

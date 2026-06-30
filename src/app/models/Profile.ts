@@ -30,6 +30,7 @@ export class Profile {
     
     id: string = "";  // Prefix should be "User-" or "Brand-" and the UUID of the user/brand
 
+    profileType: "USER" | "BRAND" = "USER";
     
     title: string = "";
 

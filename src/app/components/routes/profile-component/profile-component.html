@@ -1,1 +1,176 @@
-<p>profile-component works!</p>
+<app-top-bar-component>
+
+</app-top-bar-component>
+
+<div style="height: 50px"></div>
+
+
+<div class="main-area" [style.min-height]="minHeight" [style.max-height]="maxHeight">
+    <img [src]="getProfileImageUrl(true)" (error)="imageFallback($event, true)" alt="Cover Photo" class="cover-img"
+        style="float:left; padding-left: 10%; bottom: 0px; display: block; width: 80%; height:100%;"
+        [style.min-height]="minHeight" [style.max-height]="maxHeight">
+    <div class="main-panel flex-and-center" style="bottom: 0px;">
+        @if(connectionStatus == 'SELF_PROFILE'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop" (click)="prepNewCoverPhoto()">Set Cover Photo</button>
+        </div>
+        }
+        @if(connectionStatus == 'CAN_ACCEPT'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop" (click)="respondToConnection(true)">Confirm Connection Request</button>
+        </div>
+        }
+        @if(connectionStatus == 'CAN_CONNECT'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop" (click)="requestConnection()">Make Connection</button>
+        </div>
+        }
+        @if(connectionStatus == 'AWAITING'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop">Awaiting Response</button>
+        </div>
+        }
+        @if(connectionStatus == 'CONNECTED'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <!-- <button class="btn btn-info pic-button pic-b-desktop" (click)="message()">Message</button> -->
+        </div>
+        } 
+        @if(connectionStatus == 'CAN_FOLLOW'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop" (click)="requestConnection()">Follow {{ connectionEntry2 ? "(Follows You)" : "" }}</button>
+        </div>
+        }
+        @if(connectionStatus == 'FOLLOWING'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop">Following {{ connectionEntry2 ? "(Follows You)" : "" }}</button>
+        </div>
+        }
+            
+
+
+        <div 
+            class="flex-and-center profile-container"
+
+        >
+            <img class="profilePic" [src]="getProfileImageUrl(false)" (error)="imageFallback($event, false)" >
+        </div>
+
+        @if(connectionStatus == 'SELF_PROFILE'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-info pic-button pic-b-desktop" (click)="prepNewProfilePhoto()">Set Profile Photo</button>
+        </div>
+        }
+        @if(connectionStatus == 'CAN_ACCEPT'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-warning pic-button pic-b-desktop" (click)="respondToConnection(false)">Reject Connection Request</button>
+        </div>
+        }   
+        @if(connectionStatus == 'AWAITING'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-warning pic-button pic-b-desktop" (click)="removeConnection()">Remove Connection Request</button>
+        </div>
+        }
+        @if(connectionStatus == 'CONNECTED'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-warning pic-button pic-b-desktop" (click)="removeConnection()">Remove Connection</button>
+        </div>
+        }
+        @if(connectionStatus == 'CAN_FOLLOW' || connectionStatus == 'CAN_CONNECT'){
+        <div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+            <button class="btn btn-danger pic-button pic-b-desktop" (click)="prepBlock()">Block</button>
+        </div>
+        }
+        @if(connectionStatus == "FOLLOWING"){
+        <div>
+            <button class="btn btn-danger pic-button pic-m-desktop" (click)="removeConnection()">Unfollow</button>
+        </div>
+        }
+            
+            <!-- <div *ngIf="connectionStatus == 'FOLLOWER' || connectionStatus == 'BI_FOLLOW'">
+                <button class="btn btn-info pic-button">Follows You</button>
+            </div> -->
+        
+    </div>
+</div>
+
+<div class="profile-pic-buffer">
+    
+
+</div>
+
+@if(connectionStatus == 'SELF_PROFILE'){
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop" (click)="prepNewCoverPhoto()">Set Cover Photo</button>
+</div>
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop" (click)="prepNewProfilePhoto()">Set Profile Photo</button>
+</div>
+}
+@if(connectionStatus == 'CAN_ACCEPT'){
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop" (click)="respondToConnection(true)">Confirm Connection Request</button>
+</div>
+<div>
+    <button class="btn btn-warning pic-button pic-m-desktop" (click)="respondToConnection(false)">Reject Connection Request</button>
+</div>
+}
+@if(connectionStatus == 'CAN_CONNECT'){
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop" (click)="requestConnection()">Make Connection</button>
+</div>
+<div>
+    <button class="btn btn-danger pic-button pic-m-desktop" (click)="prepBlock()">Block</button>
+</div>
+}
+@if(connectionStatus == 'AWAITING'){
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop">Awaiting Response</button>
+</div>
+<div>
+    <button class="btn btn-warning pic-button pic-m-desktop" (click)="removeConnection()">Remove Connection Request</button>
+</div>
+}
+@if(connectionStatus == 'CONNECTED'){
+<div>
+    <!-- <button class="btn btn-info pic-button pic-m-desktop" (click)="message()">Message</button> -->
+</div>
+<div>
+    <button class="btn btn-warning pic-button pic-m-desktop" (click)="removeConnection()">Remove Connection</button>
+</div>
+} 
+@if(connectionStatus == 'CAN_FOLLOW'){
+<div>
+    <button class="btn btn-info pic-button pic-m-desktop" (click)="requestConnection()">Follow {{ connectionEntry2 ? "(Follows you)" : "" }}</button>
+</div>
+<div>
+    <button class="btn btn-danger pic-button pic-m-desktop" (click)="prepBlock()">Block</button>
+</div>
+}
+@if(connectionStatus == 'FOLLOWING'){
+<div class="set-profile-wrap flex-and-bottom" style="width: 33%; height:100%;">
+    <button class="btn btn-info pic-button pic-b-desktop">Following {{ connectionEntry2 ? "(Follows You)" : "" }}</button>
+</div>
+<div>
+    <button class="btn btn-danger pic-button pic-m-desktop" (click)="removeConnection()">Unfollow</button>
+</div>
+}
+
+
+@if(profileService.searchedProfile() || profileService.activeProfile()) {
+
+
+<app-profile-details-component #profileDetails [connectionStatus]="connectionStatus" (onNewContentPrepped)="onContentPrepped()"></app-profile-details-component>
+
+}
+
+
+
+<app-image-panel-component
+    #profImgGallery
+    [maxHeight]="'80%'"
+    [app]="app" 
+    [show]="showGallery" 
+    [purpose]="galleryPurpose"
+    [retrieveAllImages]="true"
+    (onClose)="showGallery = false"
+></app-image-panel-component>

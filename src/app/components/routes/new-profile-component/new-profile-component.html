@@ -1,1 +1,96 @@
-<p>new-profile-component works!</p>
+<div class="container" appElementContainer>
+
+    <div class="flex-and-center" appElementItem>
+        <h1>New Profile</h1>
+    </div>
+
+    <div appElementItem>
+        <h2>Default Profile</h2>
+        <div class="profile-pic-container">
+            <div class="profile-pic-holder">
+                <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
+            </div>
+        </div>
+        <div class="profile-name-holder">{{profileService.authService.account?.activeAccount?.displayName}}</div>
+    </div>
+
+    @if((createUser && profileService.authService.account?.activeAccount != profileService.authService.account?.mainAccount)){
+
+    <div appElementItem>
+        <h2>Profile to be Created</h2>
+        <div class="profile-pic-container">
+            <div class="profile-pic-holder">
+                <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
+            </div>
+        </div>
+        <div class="profile-name-holder">{{ (profileService.authService.account?.activeAccount?.displayName || "")}}</div>
+    </div>
+
+    }
+
+    <!-- @if(profileService.authService.tcBrand){
+        <div appElementItem>
+            <input class="form-check-input" type="checkbox" [checked]="createUser" (change)="createUser = $event.target.checked; checkProfile()">
+            <label class="form-check-label">Use User Account</label>
+        </div>
+    } -->
+<!-- 
+
+    @if(profileService.authService.account?.brandAccounts?.length || 0 > 0){
+        <div appElementItem>
+            <input class="form-check-input" type="checkbox" [checked]="createUser" (change)="createUser = $event.target.checked; checkProfile()">
+            <label class="form-check-label">Use Brand Account</label>
+    <div appElementItem>
+        <select class="form-select" [(ngModel)]="profileService.authService.account?.activeAccount" (change)="checkProfile()">
+            <option [ngValue]="undefined">Don't override Brand Account Login</option>
+
+            
+
+            @for(brands of profileService.authService.ownedAccounts; track brands) {
+                <option [ngValue]="brands">{{brands.name}}</option>
+            }
+
+        </select>
+    </div>
+    } -->
+
+
+    <div appElementItem class="form">
+
+        <div class="form-group">
+            <label>About Me (short, can be appended to your display name)</label>
+            <input class="form-control" [(ngModel)]="newProfile.aboutMeShort">
+        </div>
+
+        <div class="form-group">
+            <label>About Me (longer version, appears on your profile page)</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="newProfile.aboutMe"></textarea>
+        </div>
+
+        <div clacc="form-group">
+            <label>Pronouns</label>
+            <select class="form-select" [(ngModel)]="newProfile.pronouns">
+                @for(pronoun of availablePronouns; track pronoun){
+                    <option [ngValue]="pronoun">{{pronoun}}</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Pronoun Visibility</label>
+            <select class="form-select" [(ngModel)]="newProfile.pronounVisibility">
+                @for(pronounVis of pronounVisibility; track pronounVis){
+                    <option [ngValue]="pronounVis">{{pronounVis}}</option>
+                }
+            </select>
+        </div>
+
+    </div>
+
+    <div appElementItem>
+        <button class="btn btn-primary" (click)="generateProfile()" [disabled]="checkingProfile">Create Profile</button>
+        <button class="btn btn-dark" (click)="profileService.authService.logout()" [disabled]="checkingProfile">Logout</button>
+    </div>
+
+
+</div>
