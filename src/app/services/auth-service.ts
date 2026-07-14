@@ -36,7 +36,7 @@ export class AuthService {
           this.styleService.setDarkMode(targetStyle.useDark);
         }
 
-    this.router.navigate(["/user"]);
+    this.router.navigate(["/home"]);
 
     
   }
