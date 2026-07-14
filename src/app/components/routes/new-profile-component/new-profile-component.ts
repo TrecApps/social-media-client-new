@@ -72,7 +72,7 @@ export class NewProfileComponent {
       }
 
       // Check to see if we currently have a profile
-      if(this.profileService.authService.account?.activeAccount) {
+      if(this.profileService.authService.account()?.activeAccount) {
         this.doRedirect();
         return;
       }
@@ -140,7 +140,7 @@ export class NewProfileComponent {
 
     this.checkingProfile = true;
 
-    this.profileService.postProfile(this.newProfile, this.profileService.authService.account?.activeAccount?.id).subscribe({
+    this.profileService.postProfile(this.newProfile, this.profileService.authService.account()?.activeAccount?.id).subscribe({
       next:() => {
         this.checkingProfile = false;
         this.router.navigateByUrl("/profile");

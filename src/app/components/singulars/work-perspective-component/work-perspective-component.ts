@@ -44,7 +44,10 @@ export class WorkPerspectiveComponent {
 
   addExperience() {
     let newExp = new WorkExp();
-    this.perspective().workExperience.push(newExp);
-    this.activeExperience = newExp;
+    let perspective = this.perspective();
+    if (perspective) {
+      perspective.workExperience.push(newExp);
+      this.activeExperience = newExp;
+    }
   }
 }

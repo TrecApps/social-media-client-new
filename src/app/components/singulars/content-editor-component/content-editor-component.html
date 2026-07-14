@@ -2,13 +2,13 @@
 
 <app-popup-component (onClose)="onPopupClose.emit()">
 
-    <div appElementContainer style="min-width: 60vw;">
+    <div appElementContainerDirective style="min-width: 60vw;">
 
         @if(parent){
             <app-content-component [content]="parent" [showFull]="false" />
         }
 
-        <div appElementItem>
+        <div appElementItemDirective>
 
             <div class="post-top-edit">
             <div class="post-profile-holder-edit">

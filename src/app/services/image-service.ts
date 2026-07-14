@@ -16,7 +16,7 @@ export class ImageService {
   }
 
   get creator(): string {
-    return this.authService.account?.mainAccount.id || "";
+    return this.authService.account()?.mainAccount.id || "";
   }
 
   postImage(entry: ImageEntry, uploadMode: ImageUploadMode): Observable<ResponseObj>{

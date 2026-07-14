@@ -8,7 +8,7 @@
 
     <div class="home-right-container">
 
-        <div class="home-profile-area" appElementContainer>
+        <div class="home-profile-area" appElementContainerDirective>
             <div class="home-profile-top">
                 <div class="home-profile-pic-holder">
                     <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
@@ -17,17 +17,17 @@
 
             <div class="home-profile-pic-buffer"></div>
 
-            <div class="home-profile-name-holder" appElementItem>
+            <div class="home-profile-name-holder" appElementItemDirective>
                 <p>{{ profileService.activeProfile()?.title + getPronouns() }}</p>
             </div>
 
             @if(profileService.activeProfile()){
 
-            <div class="home-profile-detail-holder" appElementItem>
+            <div class="home-profile-detail-holder" appElementItemDirective>
                 <p>{{ profileService.activeProfile()?.aboutMeShort }}</p>
             </div>
 
-            <div class="home-profile-detail-holder" appElementItem>
+            <div class="home-profile-detail-holder" appElementItemDirective>
                 <p>{{ profileService.activeProfile()?.aboutMe }}</p>
             </div>
 
@@ -59,9 +59,9 @@
     </div>
 
 
-    <div appElementContainer class="home-middle-container ">
+    <div appElementContainerDirective class="home-middle-container ">
 
-        <div class="item-button" appElementItem (click)="prepareNewPosting()">
+        <div class="item-button" appElementItemDirective (click)="prepareNewPosting()">
             <p>Post to Profile</p>
         </div>
 

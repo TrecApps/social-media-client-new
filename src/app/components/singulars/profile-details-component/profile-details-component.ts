@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
 import { ElementItemDirective } from '../../../directives/element-item-directive';
 import { BottomTickerComponent } from '../../Lib/bottom-ticker-component/bottom-ticker-component';
 import { DuoContentComponent } from '../../Lib/duo-content-component/duo-content-component';
@@ -19,6 +19,12 @@ import { PopupComponent } from "../../Lib/popup-component/popup-component";
 import { EditEducation } from '../edit-education/edit-education';
 import { WorkPerspectiveComponent } from '../work-perspective-component/work-perspective-component';
 
+
+class ShowWorkPerspective{
+  workPerspective: WorkExpHolder = new WorkExpHolder();
+  show: boolean = false;
+}
+
 @Component({
   selector: 'app-profile-details-component',
   imports: [DuoContentComponent, TabComponent, ContentEditorComponent,
@@ -37,14 +43,22 @@ export class ProfileDetailsComponent {
 
   profileService: ProfileService;
 
-  showEducation: Education | undefined;
-  showWorkPerspective: WorkExpHolder | undefined;
-  eduIndex: number = -1;
+  showEducation: WritableSignal<Education | undefined> = signal(undefined);
+  showWorkPerspective: ModelSignal<ShowWorkPerspective> = model<ShowWorkPerspective>(new ShowWorkPerspective());
+  eduIndex: WritableSignal<number> = signal(-1);
 
+  setNewWorkPerspective(holder: WorkExpHolder | undefined){
+    let workPerspective = new ShowWorkPerspective();
+    if(holder){
+      workPerspective.workPerspective = holder;
+      workPerspective.show = true;
+    }
+    this.showWorkPerspective.set(workPerspective);
+  }
 
   // Making a Post
-  edit: ContentEdit | undefined;
-  parent: FullPosting | undefined;
+  edit: ModelSignal<ContentEdit | undefined> = model<ContentEdit|undefined>(undefined);
+  parent: WritableSignal<FullPosting | undefined> = signal(undefined);
 
   tabOptions: TabOption[] = [
     {
@@ -62,7 +76,7 @@ export class ProfileDetailsComponent {
     }
   ];
   
-  curTab: string = "fav";
+  curTab: WritableSignal<string> = signal("fav");
 
 
   postingList: SortedList<FullPosting> = new SortedList<FullPosting>((a: FullPosting, b: FullPosting) => {
@@ -83,9 +97,9 @@ export class ProfileDetailsComponent {
     return bVal - aVal;
   });
 
-  outOfPosts: boolean = false;
-  postingPage: number = 0;
-  postingSize: number = 15;
+  outOfPosts: WritableSignal<boolean> = signal(false);
+  postingPage: WritableSignal<number> = signal(0);
+  postingSize: WritableSignal<number> = signal(15);
 
 
   constructor(ps: ProfileService, private contentService: ContentService){
@@ -98,55 +112,59 @@ export class ProfileDetailsComponent {
   }
 
 
-  updatingEducation: boolean = false;
+  updatingEducation: WritableSignal<boolean> = signal(false);
   prepNewEducation(){
-    this.eduIndex = -1;
-    this.showEducation = new Education();
+    this.eduIndex.set(-1);
+    this.showEducation.set(new Education());
   }
 
   updateEducation(update: boolean = true){
-    if(!this.showEducation || this.updatingEducation) return;
-    this.updatingEducation = true;
-    let passIndex = this.eduIndex == -1 ? undefined : this.eduIndex.toString();
+    if(!this.showEducation() || this.updatingEducation()) return;
+    this.updatingEducation.set(true);
+    let passIndex = this.eduIndex() == -1 ? undefined : this.eduIndex().toString();
     let callType: CALL_TYPE = update ? (
       passIndex ? CALL_TYPE.PUT : CALL_TYPE.POST
     ) : CALL_TYPE.DELETE;
-    let curIndex = this.eduIndex;
-    this.profileService.editEnducation(callType, this.showEducation, passIndex)
+    let curIndex = this.eduIndex();
+    this.profileService.editEnducation(callType, this.showEducation(), passIndex)
       .subscribe({
         next: (response: ResponseObj) => {
           let activeProfile = this.profileService.activeProfile();
+          let showEducation = this.showEducation();
           if(callType == CALL_TYPE.POST) {
-            if(this.showEducation && activeProfile)
-              activeProfile.education.push(this.showEducation);
+            if(showEducation && activeProfile)
+              activeProfile.education.push(showEducation);
           } else if(callType == CALL_TYPE.PUT) {
-            if(this.showEducation && activeProfile)
-              activeProfile.education[curIndex] = this.showEducation;
+            if(showEducation && activeProfile)
+              activeProfile.education[curIndex] = showEducation;
           } else if(callType == CALL_TYPE.DELETE) {
-            if(this.showEducation && activeProfile) {
+            if(showEducation && activeProfile) {
               activeProfile.education.splice(curIndex, 1);
             }
-            this.showEducation = undefined;
+            this.showEducation.set(undefined);
           }
         
-          this.updatingEducation = false;
+          this.updatingEducation.set(false);
         },
         error: () => {
-          this.updatingEducation = false;
+          this.updatingEducation.set(false);
         }
       })
   
   }
 
-  workIsNew: boolean = false;
+  workIsNew: WritableSignal<boolean> = signal(false);
 
   prepNewPerspective(){
-    this.workIsNew = true;
-    this.showWorkPerspective = new WorkExpHolder();
+    this.workIsNew.set(true);
+    let showWorkPerspective = new ShowWorkPerspective();
+    showWorkPerspective.show = true;
+    this.showWorkPerspective.set(showWorkPerspective);
   }
-  updatingWork: boolean = false;
-  updateWorkExperience(holder: WorkExpHolder, doDelete: boolean = false){
-    if(this.updatingWork) return;
+  updatingWork: WritableSignal<boolean> = signal(false);
+  updateWorkExperience(holder: WorkExpHolder | undefined, doDelete: boolean = false){
+    if(this.updatingWork()) return;
+    if(!holder) return;
 
     holder.perspective = holder.perspective.map((v: string) => {
       return v.trim();
@@ -157,19 +175,19 @@ export class ProfileDetailsComponent {
       return;
     }
 
-    this.updatingWork = true;
+    this.updatingWork.set(true);
 
     let callType: CALL_TYPE = !doDelete ? (
-      this.workIsNew ? CALL_TYPE.POST : CALL_TYPE.PUT
+      this.workIsNew() ? CALL_TYPE.POST : CALL_TYPE.PUT
     ) : CALL_TYPE.DELETE;
 
     this.profileService.editExperience(callType, holder, holder.perspective[0]).subscribe({
       next: (val: ResponseObj) => {
 
-        this.updatingWork = false;
+        this.updatingWork.set(false);
         let targetProfile = this.profileService.activeProfile();
         if(!targetProfile) {
-          this.showWorkPerspective = undefined;
+          this.showWorkPerspective.set(new ShowWorkPerspective());
           return;
         }
         if(doDelete){
@@ -179,38 +197,40 @@ export class ProfileDetailsComponent {
             return true;
           });
         } else {
-          if(this.workIsNew){
-            this.workIsNew = false;
+          if(this.workIsNew()){
+            this.workIsNew.set(false);
             targetProfile.workExperiences.push(holder);
           }
         }
 
-        this.showWorkPerspective = undefined;
+        this.showWorkPerspective.set(new ShowWorkPerspective());
       },
       error: () => {
-        this.updatingWork = false;
+        this.updatingWork.set(false);
       }
     })
   }
 
   prepareNewPosting(posting: FullPosting | undefined){
-    this.parent = posting;
-    this.edit = new ContentEdit();
-    this.edit.profileId = this.profileService.presentProfile()?.id;
+    this.parent.set(posting);
+    let edit = new ContentEdit();
+    edit.profileId = this.profileService.presentProfile()?.id;
+    this.edit.set(edit);
     this.onNewContentPrepped.emit();
   }
 
   handlePostResult(posting: Posting){
-    if(this.handlePostResultOnParent(posting) || !this.edit) return;
+    let edit = this.edit();
+    if(this.handlePostResultOnParent(posting) || !edit) return;
 
-    if(this.edit.contentId){
+    if(edit.contentId){
       // Posting already exists, simply update
 
       let targetIndex = posting.contents.length - 1;
       let newContent = posting.contents.at(targetIndex);
       if(newContent){
         this.postingList.items.forEach((reply: FullPosting) => {
-          if(reply.posting.id == this.edit?.contentId && targetIndex >= 0){      
+          if(reply.posting.id == edit?.contentId && targetIndex >= 0){      
             reply.posting.contents.push(newContent);  
           }
         })
@@ -221,28 +241,30 @@ export class ProfileDetailsComponent {
       this.profileService.addFullPostingToSortedList(this.postingList, posting);
     }
 
-    this.edit = undefined;
-    this.parent = undefined;
+    this.edit.set(undefined);
+    this.parent.set(undefined);
 
 
   }
 
   handlePostResultOnParent(posting: Posting): boolean {
-    if(!this.parent || !this.edit) return false;
+    let edit = this.edit();
+    let parent = this.parent();
+    if(!parent || !edit) return false;
 
-    if(this.edit.contentId){
+    if(edit.contentId){
       // Posting already exists, simply update
 
       let targetIndex = posting.contents.length - 1;
       let newContent = posting.contents.at(targetIndex);
       if(newContent)
-        this.parent.replies.forEach((reply: FullPosting) => {
-          if(reply.posting.id == this.edit?.contentId && targetIndex >= 0){      
+        parent.replies.forEach((reply: FullPosting) => {
+          if(reply.posting.id == edit?.contentId && targetIndex >= 0){      
             reply.posting.contents.push(newContent);  
           }
         });
     } else {
-      this.profileService.addFullPostingToList(this.parent.replies, posting);
+      this.profileService.addFullPostingToList(parent.replies, posting);
     }
 
     return true;
@@ -256,17 +278,17 @@ export class ProfileDetailsComponent {
     if(!prof) return;
     if(brandNew){
       this.postingList.clear();
-      this.postingPage = 0;
-      this.outOfPosts = false;
+      this.postingPage.set(0);
+      this.outOfPosts.set(false);
     }
 
     this.retrievingPosts = true;
-    this.contentService.getPostListByProfile(prof.id, this.postingPage, this.postingSize).subscribe({
+    this.contentService.getPostListByProfile(prof.id, this.postingPage(), this.postingSize()).subscribe({
       next: (ids: string[]) => {
         this.retrievingPosts = false;
-        this.postingPage++;
-        if(ids.length < this.postingSize){
-          this.outOfPosts = true;
+        this.postingPage.update((value: number) => value + 1);
+        if(ids.length < this.postingSize()){
+          this.outOfPosts.set(true);
         }
         for(let id of ids){
           this.contentService.getPosting(id).subscribe({

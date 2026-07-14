@@ -1,35 +1,35 @@
-<div class="container" appElementContainer>
+<div class="container" appElementContainerDirective>
 
-    <div class="flex-and-center" appElementItem>
+    <div class="flex-and-center" appElementItemDirective>
         <h1>New Profile</h1>
     </div>
 
-    <div appElementItem>
+    <div appElementItemDirective>
         <h2>Default Profile</h2>
         <div class="profile-pic-container">
             <div class="profile-pic-holder">
                 <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
             </div>
         </div>
-        <div class="profile-name-holder">{{profileService.authService.account?.activeAccount?.displayName}}</div>
+        <div class="profile-name-holder">{{profileService.authService.account()?.activeAccount?.displayName}}</div>
     </div>
 
-    @if((createUser && profileService.authService.account?.activeAccount != profileService.authService.account?.mainAccount)){
+    @if((createUser && profileService.authService.account()?.activeAccount != profileService.authService.account()?.mainAccount)){
 
-    <div appElementItem>
+    <div appElementItemDirective>
         <h2>Profile to be Created</h2>
         <div class="profile-pic-container">
             <div class="profile-pic-holder">
                 <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
             </div>
         </div>
-        <div class="profile-name-holder">{{ (profileService.authService.account?.activeAccount?.displayName || "")}}</div>
+        <div class="profile-name-holder">{{ (profileService.authService.account()?.activeAccount?.displayName || "")}}</div>
     </div>
 
     }
 
     <!-- @if(profileService.authService.tcBrand){
-        <div appElementItem>
+        <div appElementItemDirective>
             <input class="form-check-input" type="checkbox" [checked]="createUser" (change)="createUser = $event.target.checked; checkProfile()">
             <label class="form-check-label">Use User Account</label>
         </div>
@@ -37,10 +37,10 @@
 <!-- 
 
     @if(profileService.authService.account?.brandAccounts?.length || 0 > 0){
-        <div appElementItem>
+        <div appElementItemDirective>
             <input class="form-check-input" type="checkbox" [checked]="createUser" (change)="createUser = $event.target.checked; checkProfile()">
             <label class="form-check-label">Use Brand Account</label>
-    <div appElementItem>
+    <div appElementItemDirective>
         <select class="form-select" [(ngModel)]="profileService.authService.account?.activeAccount" (change)="checkProfile()">
             <option [ngValue]="undefined">Don't override Brand Account Login</option>
 
@@ -55,7 +55,7 @@
     } -->
 
 
-    <div appElementItem class="form">
+    <div appElementItemDirective class="form">
 
         <div class="form-group">
             <label>About Me (short, can be appended to your display name)</label>
@@ -87,7 +87,7 @@
 
     </div>
 
-    <div appElementItem>
+    <div appElementItemDirective>
         <button class="btn btn-primary" (click)="generateProfile()" [disabled]="checkingProfile">Create Profile</button>
         <button class="btn btn-dark" (click)="profileService.authService.logout()" [disabled]="checkingProfile">Logout</button>
     </div>

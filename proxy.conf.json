@@ -1,0 +1,26 @@
+{
+    "/User-api/**": {
+      "target": "http://localhost:8080",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    },
+    "/Image-man-api/**": {
+      "target": "http://localhost:8080",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    },
+    "/sm-api/**": {
+      "target": "http://localhost:8080",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    },
+    "/Falsehoods-api/**": {
+      "target": "http://localhost:8080",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    }
+}

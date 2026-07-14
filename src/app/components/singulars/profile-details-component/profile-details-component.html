@@ -1,36 +1,36 @@
 <app-duo-content-component [mainText]="'About ' + getProfileDisplayName()">
     <div class="right-content">
-        <div appElementItem style="padding: 10px">
+        <div appElementItemDirective style="padding: 10px">
             <p>
                 {{ profileService.presentProfile()?.aboutMe }} 
             </p>
         </div>
-                <app-tab-component [tabs]="tabOptions" (tabSelect)="curTab = $event">
-        @if(curTab == 'edu'){
+                <app-tab-component [tabs]="tabOptions" (tabSelect)="curTab.set($event)">
+        @if(curTab() == 'edu'){
 
-            <div appElementContainer>
+            <div appElementContainerDirective>
                 @if(profileService.searchedProfile == undefined){
                     <button class="btn btn-primary" (click)="prepNewEducation()">Add Education</button>
                 }
                 
 
             @for(edu of (profileService.searchedProfile() || profileService.activeProfile())?.education; track edu){
-                <div appElementItem (click)="showEducation = edu; eduIndex = $index">
+                <div appElementItemDirective (click)="showEducation.set(edu); eduIndex.set($index)">
                     <p><b>{{edu.schoolName}}</b> {{edu.start.month}} {{edu.start.year}} - {{edu.graduation.month}} {{edu.graduation.year}}</p>
                 </div>
             }
             </div>
 
-        } @else if(curTab == 'fav'){
+        } @else if(curTab() == 'fav'){
 
-        } @else if (curTab == 'work') {
-            <div appElementContainer>
+        } @else if (curTab() == 'work') {
+            <div appElementContainerDirective>
                 @if(profileService.searchedProfile == undefined){
                     <button class="btn btn-primary" (click)="prepNewPerspective()">Add Work Perspective</button>
                 }
 
                 @for(per of (profileService.searchedProfile() || profileService.activeProfile())?.workExperiences; track per){
-                <div appElementItem (click)="showWorkPerspective = per; workIsNew = false">
+                <div appElementItemDirective (click)="setNewWorkPerspective(per)">
                     <p><b>Perspectives: </b> 
                     
                     @for(p of per.perspective; track p){
@@ -45,7 +45,7 @@
                 }
 
             </div>
-        } @else if (curTab == 'conn'){
+        } @else if (curTab() == 'conn'){
             <app-connection-list-component />
         }
         </app-tab-component>
@@ -55,7 +55,7 @@
 
     <div>
         @if(connectionStatus == 'SELF_PROFILE' || connectionStatus == 'CONNECTED'){
-            <div class="item-button" appElementItem (click)="prepareNewPosting(undefined)">
+            <div class="item-button" appElementItemDirective (click)="prepareNewPosting(undefined)">
                 <p>Post to Profile</p>
             </div>
         }
@@ -69,14 +69,14 @@
         }
 
         <app-bottom-ticker-component
-            [stillMore]="!outOfPosts"
+            [stillMore]="!outOfPosts()"
             (onAppear)="retrievePosts(false)"
         />
     </div>
 </app-duo-content-component>
 
-@if(showEducation) {
-    <app-popup-component (onClose)="showEducation = undefined">
+@if(showEducation()) {
+    <app-popup-component (onClose)="showEducation.set(undefined)">
         <app-edit-education 
         [isSelf]="profileService.searchedProfile == undefined"
             [(education)]="showEducation" 
@@ -86,19 +86,19 @@
     </app-popup-component>
 }
 
-@if(showWorkPerspective){
-    <app-popup-component (onClose)="showWorkPerspective = undefined">
+@if(showWorkPerspective().show){
+    <app-popup-component (onClose)="setNewWorkPerspective(undefined)">
         <app-work-perspective-component
-            [(perspective)]="showWorkPerspective"
+            [(perspective)]="showWorkPerspective().workPerspective"
             [isOwned]="profileService.searchedProfile == undefined"
-            (onUpdate)="updateWorkExperience(showWorkPerspective, false)"
-            (onDelete)="updateWorkExperience(showWorkPerspective, true)"
+            (onUpdate)="updateWorkExperience(showWorkPerspective().workPerspective,false)"
+            (onDelete)="updateWorkExperience(showWorkPerspective().workPerspective, true)"
         />
     </app-popup-component>
 }
 
 <app-content-editor-component
-    [edit]="edit"
-    [parent]="parent"
+    [edit]="edit()"
+    [parent]="parent()"
     (onPosted)="handlePostResult($event)"
 />

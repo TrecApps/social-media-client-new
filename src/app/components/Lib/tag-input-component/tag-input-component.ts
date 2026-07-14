@@ -13,14 +13,18 @@ export class TagInputComponent {
   curTag: string = "";
 
   addTag(){
-    if(!this.tags().includes(this.curTag)){
-      let ret = [...this.tags(), this.curTag];
+    let tags = this.tags();
+    if(!tags){ return;}
+    if(!tags.includes(this.curTag)){
+      let ret = [...tags, this.curTag];
       this.tags.set(ret);
     }
     this.curTag = "";
   }
 
   removeTag(t: string){
-    this.tags.update((tags: string[]) => tags.filter((e: string) => t != e));
+    let tags = this.tags();
+    if(!tags){ return;}
+    this.tags.update(() => tags.filter((e: string) => t != e));
   }
 }

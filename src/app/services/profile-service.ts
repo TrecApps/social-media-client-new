@@ -92,7 +92,7 @@ export class ProfileService {
 
   retrieveOwnProfile(): Observable<Profile> {
     let profileId = "";
-      let list = this.authService.account;
+      let list = this.authService.account();
     if(list){
     profileId = list.activeAccount?.id || list.mainAccount.id;
     } else return throwError(() => {

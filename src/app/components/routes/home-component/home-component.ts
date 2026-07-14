@@ -62,7 +62,7 @@ export class HomeComponent {
 
       // If we are not logged in, the auth service will automatically route to the login page.
       // We need to make sure we have a profile
-      if(profileService.authService.account && !profileService.activeProfile) {
+      if(profileService.authService.account() && !profileService.activeProfile()) {
         profileService.retrieveOwnProfile().subscribe({
           error: () => {
             router.navigateByUrl("/registration");

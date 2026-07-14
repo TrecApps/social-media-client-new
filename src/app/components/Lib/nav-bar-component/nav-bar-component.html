@@ -41,7 +41,7 @@
           (mouseleave)="onIconHover(navOption, false)"
           >
           @if(navOption.notifyCount){
-            <div class="notification-counter" appElementItem>
+            <div class="notification-counter" appElementItemDirective>
               <p>{{ navOption.notifyCount }}</p>
             </div>
           }
@@ -51,27 +51,27 @@
     </div>
 
 
-    @if (authService.account) {
+    @if (authService.account()) {
       <div class="profile-section"  (click)="onFocusProfile($event)">
         <ng-content select="profile-ext" style="height: 100%"></ng-content>
         <div class="profile-img">
-          <img [src]="basicImageUrl + authService.account?.activeAccount?.id" (error)="imageError($event)">
+          <img [src]="basicImageUrl + authService.account()?.activeAccount?.id" (error)="imageError($event)">
         </div>
         <div class="profile-name">
-          {{ authService.account?.activeAccount?.displayName }}
+          {{ authService.account()?.activeAccount?.displayName }}
         </div>
       </div>
     }
 
-    @if (!authService.account) {
+    @if (!authService.account()) {
       <button class="btn btn-primary desktop-login" (click)="onLoginRequest()">Log in</button>
     }
   </div>
 
-  @if (authService.account && items.length) {
+  @if (authService.account() && items.length) {
     <div #profilePanel
       class="profile-panel"
-      appElementContainer
+      appElementContainerDirective
       hidden
       >
       @for (itemGroup of items; track itemGroup; let i = $index) {
@@ -82,7 +82,7 @@
             }
             @for (item of itemGroup.itemList | navProfilePipe; track item) {
               <div
-                appElementItem
+                appElementItemDirective
                 (click)="onProfileItemClicked.emit(item.item)"
                 >
                 <p>{{ item.displayItem }}</p>
@@ -96,25 +96,25 @@
     <!-- @if (authService.ownedAccounts?.length) {
       <div #brandPanel
         class="profile-panel"
-        appElementContainer
+        appElementContainerDirective
         hidden
         >
         @for (brand of authService.ownedAccounts; track brand) {
-          <div appElementItem class="brand-container">
+          <div appElementItemDirective class="brand-container">
             <div class="brand-left-side">
               <img [src]="basicImageUrl + formatBrandId(brand.id || '')" (error)="imageError($event)">
             </div>
             <div class="brand-right-side">
               <p style="text-align: center;">{{ brand.name }}</p>
               <div class="brand-right-buttons">
-                <div class="brand-right-button" appElementItem>
+                <div class="brand-right-button" appElementItemDirective>
                   <a [href]="baseUserUrl + '/brands'" target="_blank">
                     <div style="border: 1px rgba(128, 128, 128, 0.4) solid;" >
                       View Brand
                     </div>
                   </a>
                 </div>
-                <div class="brand-right-button" appElementItem >
+                <div class="brand-right-button" appElementItemDirective >
                   <div style="border: 1px rgba(128, 128, 128, 0.4) solid;" (click)="loginAsBrand(brand.id)">
                     {{ authService.tcBrand?.id == brand.id ? 'Active Brand' : 'Assume Brand'}}
                   </div>
@@ -140,7 +140,7 @@
         >
 
         @if(navOption.notifyCount){
-          <div class="notification-counter" appElementItem>
+          <div class="notification-counter" appElementItemDirective>
             <p>{{ navOption.notifyCount }}</p>
           </div>
         }
@@ -150,18 +150,18 @@
       </div>
     }
 
-    @if (authService.account) {
+    @if (authService.account()) {
       <div
         class="bottom-bar-holder"
         [ngClass]="iconClass"
         style="border-radius: 50%; overflow: hidden;"
         (click)="onFocusProfile($event)"
         >
-        <img [src]="basicImageUrl + authService.account.activeAccount?.id" (error)="imageError($event)">
+        <img [src]="basicImageUrl + authService.account()?.activeAccount?.id" (error)="imageError($event)">
         <div [ngClass]="divLineClass"></div>
       </div>
     }
-    @if (!authService.account) {
+    @if (!authService.account()) {
       <div
         class="bottom-bar-holder"
         [ngClass]="iconClass"

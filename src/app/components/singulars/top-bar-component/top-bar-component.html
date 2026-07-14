@@ -31,7 +31,7 @@
       >
       <label class="form-check-label">Use Dark mode</label>
       <div class="element-item" [ngClass]="'element-item-' + ss.style" style="height: 10px"></div>
-      @if (authService.account) {
+      @if (authService.account()) {
         <button [disabled]="!colorChanged" class="btn btn-primary" (click)="updateStyle()"> Persist Style</button>
       }
     </div>

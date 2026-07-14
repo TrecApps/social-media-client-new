@@ -1,6 +1,6 @@
-<div class="duo-holder" [style]="'gap:' + flexGap + ';'" appElementContainer>
+<div class="duo-holder" [style]="'gap:' + flexGap + ';'" appElementContainerDirective>
 
-    <div class="duo-right-holder" appElementItem [style]="'max-width: ' + rightMaxWidth">
+    <div class="duo-right-holder" appElementItemDirective [style]="'max-width: ' + rightMaxWidth">
         <h3 (click)="mobileShowRight.set(!mobileShowRight())" class="expand_header">
             <img 
                 [class.rotate-expanded]="mobileShowRight()"
@@ -15,7 +15,7 @@
 
         </div>
     </div>
-    <div class="duo-left-holder" appElementItem [style]="'min-width: ' + minWIdth + '; max-width: ' + leftMaxWidth">
+    <div class="duo-left-holder" appElementItemDirective [style]="'min-width: ' + minWIdth + '; max-width: ' + leftMaxWidth">
 
         <ng-content></ng-content>
 
