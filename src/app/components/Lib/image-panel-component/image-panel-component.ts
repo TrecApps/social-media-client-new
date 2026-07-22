@@ -326,7 +326,7 @@ export class ImagePanelComponent {
       }
     }
 
-    return firstRecord || "assets/icons/X-image.png";
+    return firstRecord || "assets/X-image.png";
 
   }
 

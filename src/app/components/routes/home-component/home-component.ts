@@ -155,6 +155,9 @@ export class HomeComponent {
 
   imageFallback($event: ErrorEvent) {
     let target = $event.target as HTMLImageElement;
+
+    if(target.src.endsWith("non-profile.png")) return;
+
     target.src = "non-profile.png";
   }
 

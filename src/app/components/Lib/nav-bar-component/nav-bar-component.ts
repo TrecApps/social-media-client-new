@@ -104,7 +104,10 @@ export class NavBarComponent {
 
   imageError(event: Event){
     const target = event.target as HTMLImageElement;
-    target.src = '/assets/Unknown_Profile.png'
+
+    if(target.src.endsWith("Unknown_Profile.png")) return;
+
+    target.src = '/Unknown_Profile.png'
   }
 
   // loggingInAsBrand: boolean = false;

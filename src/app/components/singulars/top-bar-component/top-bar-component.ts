@@ -159,7 +159,7 @@ export class TopBarComponent {
         displayText: 'Home',
         title: 'home',
         showOption: NavOptionShow.BASIC_DESKTOP,
-        baseImg: 'assets/w-home.png',
+        baseImg: 'assets/icons/w-home.png',
         notifyCount: 0
       },
       {
