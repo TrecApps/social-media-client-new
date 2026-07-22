@@ -67,6 +67,7 @@ export class AuthService {
           this.styleService.setDarkMode(targetStyle.useDark);
         }
 
+    
     this.router.navigate(["/home"]);
 
     
@@ -109,11 +110,12 @@ export class AuthService {
       next: (value: AccountList) => {
         this.account.set(value);
 
+
         this.setAccountAuth();
 
         // To-Do: Handle login Success
         this.onLoginSuccess();
-
+        if(func) func(LoginResult.SUCCESS);
         
       },
       error:  (e) => {

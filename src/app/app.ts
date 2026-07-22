@@ -53,7 +53,9 @@ export class App implements OnDestroy , OnInit {
 
   }
   ngOnInit(): void {
-    this.authService.attemptRefresh((res: LoginResult) => {});
+    this.authService.attemptRefresh((res: LoginResult) => {
+      this.profileService.retrieveOwnProfile();
+    });
   }
 
 
