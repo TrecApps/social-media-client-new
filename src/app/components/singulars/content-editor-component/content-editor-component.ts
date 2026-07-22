@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, input, Input, InputSignal, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, input, Input, InputSignal, OnInit, Output, Signal, viewChild, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 //import { AuthService, ElementContainerDirective, ElementItemDirective, ImageEntry, ImageGalleryV2Component, ImageSelectionPurpose, PopupComponent } from '@tc/tc-ngx-general';
 import { ContentPost, ContentPut, FullPosting, Posting } from '../../../models/Content';
@@ -40,8 +40,8 @@ export class ContentEditorComponent implements OnInit {
   @Output()
   onPosted = new EventEmitter<Posting>();
 
-  @ViewChild('myArea')
-  theEditor!: ElementRef<HTMLTextAreaElement>;
+  // @ViewChild('myArea')
+  theEditor: Signal<ElementRef<HTMLTextAreaElement>> = viewChild.required<ElementRef<HTMLTextAreaElement>>('myArea');;
 
   galleryPurpose: ImageSelectionPurpose = ImageSelectionPurpose.SELECT;
 
@@ -68,7 +68,7 @@ export class ContentEditorComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.useZIndex = Number.parseInt(this.theEditor.nativeElement.style.zIndex || "40") + 10;
+    //this.useZIndex = Number.parseInt(this.theEditor().nativeElement.style.zIndex || "40") + 10;
     this.showError = false;
   }
 
@@ -137,8 +137,8 @@ export class ContentEditorComponent implements OnInit {
 
   // Edit Methods
   retrieveElement(): HTMLTextAreaElement | undefined {
-    if(this.theEditor){
-      return this.theEditor.nativeElement;
+    if(this.theEditor()){
+      return this.theEditor().nativeElement;
     }
     return undefined;
   }
