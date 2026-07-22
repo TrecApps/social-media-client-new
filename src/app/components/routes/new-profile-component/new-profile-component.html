@@ -4,14 +4,29 @@
         <h1>New Profile</h1>
     </div>
 
+    @if(accountList.length > 0){
+        <div appElementItemDirective>
+            <label>Select another Profile</label>
+            <select class="form-select" (change)="checkProfile()">
+                <option [ngValue]="undefined">Don't override Brand Account Login</option>
+
+                @for(brands of accountList; track brands) {
+                    <option [ngValue]="brands">{{brands.displayName}}</option>
+                }
+
+            </select>
+        </div>
+
+    }
+
     <div appElementItemDirective>
-        <h2>Default Profile</h2>
+        <h2>{{profileService.authService.currentDisplayName}}</h2>
         <div class="profile-pic-container">
             <div class="profile-pic-holder">
                 <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
             </div>
         </div>
-        <div class="profile-name-holder">{{profileService.authService.account()?.activeAccount?.displayName}}</div>
+        <div class="profile-name-holder">{{profileService.authService.currentDisplayName}}</div>
     </div>
 
     @if((createUser && profileService.authService.account()?.activeAccount != profileService.authService.account()?.mainAccount)){
@@ -88,8 +103,8 @@
     </div>
 
     <div appElementItemDirective>
-        <button class="btn btn-primary" (click)="generateProfile()" [disabled]="checkingProfile">Create Profile</button>
-        <button class="btn btn-dark" (click)="profileService.authService.logout()" [disabled]="checkingProfile">Logout</button>
+        <button class="btn btn-primary" (click)="generateProfile()" [disabled]="checkingProfile()">Create Profile</button>
+        <button class="btn btn-dark" (click)="profileService.authService.logout()" [disabled]="checkingProfile()">Logout</button>
     </div>
 
 

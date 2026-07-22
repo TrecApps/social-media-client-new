@@ -102,7 +102,11 @@ export class ProfileService {
       return ret;
     });
 
-    let ret = this.client.get<Profile>(`${environment.sm_profile_url}Profile/id/${profileId}`).pipe(
+    let ret = this.client.get<Profile>(`${environment.sm_profile_url}Profile/id/${profileId}`, {
+      headers:{
+        "Account-Auth": this.authService.accountAuth()
+      }
+    }).pipe(
       shareReplay({bufferSize: 1, refCount: true})
     );
 

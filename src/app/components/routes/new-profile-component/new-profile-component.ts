@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription, shareReplay, delay, Observable } from 'rxjs';
@@ -8,6 +8,7 @@ import { environment } from '../../../environment/environment';
 import { PostProfile, Profile } from '../../../models/Profile';
 import { ProfileService } from '../../../services/profile-service';
 import { UrlRedirectService } from '../../../services/url-redirect-service';
+import { Account } from '../../../models/account';
 
 @Component({
   selector: 'app-new-profile-component',
@@ -20,7 +21,7 @@ export class NewProfileComponent {
     profileService: ProfileService;
 
   routeSubscription: Subscription;
-  checkingProfile: boolean = false;
+  checkingProfile: WritableSignal<boolean> = signal<boolean>(false);
 
   newProfile: PostProfile;
 
@@ -51,6 +52,10 @@ export class NewProfileComponent {
     }
   }
 
+  get accountList(): Account[] {
+    return this.profileService.authService.account()?.brandAccounts || [];
+  }
+
 
   constructor(ps: ProfileService, private router: Router, private urlService: UrlRedirectService){
     this.profileService = ps;
@@ -77,17 +82,17 @@ export class NewProfileComponent {
         return;
       }
 
-      this.checkingProfile = true;
+      this.checkingProfile.set(true);
 
       this.profileService.retrieveOwnProfile()
         .pipe(shareReplay({bufferSize: 1, refCount: true}))
         .pipe(delay(500)) // Delay our reaction so that the other subscripiton runs first
         .subscribe({
           next: () => {
-            this.checkingProfile = false;
+            this.checkingProfile.set(false);
             this.doRedirect();
           },
-          error: () => this.checkingProfile = false
+          error: () => this.checkingProfile.set(false)
         });
 
         this.newProfile = new PostProfile();
@@ -107,30 +112,26 @@ export class NewProfileComponent {
     if(!this.profileService.activeProfile()?.id) return "non-profile.png";
     return `${environment.sm_profile_url}Profile/pic/${this.profileService.activeProfile()?.id}`;
   }
+  
 
   checkProfile() {
     if(!this.createUser) return;
 
-    this.checkingProfile = true;
+    this.checkingProfile.set(true);
 
     let obs: Observable<Profile>
 
     obs = this.profileService.retrieveOwnProfile();
     
 
-    // obs.pipe(delay(500))
-    //   .subscribe({
-    //     next: () => {
-    //       this.profileService.authService.loginBrand(this.useBrand ? this.useBrand.id : undefined).subscribe({
-    //         next: () => {
-    //           // ToDo - check to make sure Auth Service automaticlly updates credentials
-    //           this.checkingProfile = false;
-    //           this.doRedirect();
-    //         }, error: () => this.checkingProfile = false
-    //       })
-    //     },
-    //     error: () => this.checkingProfile = false
-    //   });
+    obs.pipe(delay(500))
+      .subscribe({
+        next: () => {
+          this.checkingProfile.set(false);
+          this.router.navigateByUrl("/profile");
+        },
+        error: () => this.checkingProfile.set(false)
+      });
     
   }
 
@@ -138,16 +139,16 @@ export class NewProfileComponent {
 
   generateProfile(){
 
-    this.checkingProfile = true;
+    this.checkingProfile.set(true);
 
     this.profileService.postProfile(this.newProfile, this.profileService.authService.account()?.activeAccount?.id).subscribe({
       next:() => {
-        this.checkingProfile = false;
+        this.checkingProfile.set(false);
         this.router.navigateByUrl("/profile");
       },
       error: () => {
         // ToDo - alert user to error
-        this.checkingProfile = false;
+        this.checkingProfile.set(false);
       }
     })
   }

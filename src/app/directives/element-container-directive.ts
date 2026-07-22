@@ -5,7 +5,7 @@ import { StylesService } from '../services/styles-service';
   selector: '[appElementContainerDirective]',
 })
 export class ElementContainerDirective implements AfterViewInit, AfterViewChecked{
-      currentStyle: string;
+    currentStyle: string;
   
     constructor(private element: ElementRef, private styleService: StylesService) { 
       this.currentStyle = `element-container-${styleService.style()}`;

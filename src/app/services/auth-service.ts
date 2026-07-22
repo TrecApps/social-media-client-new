@@ -1,5 +1,5 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
-import { AccountList, AuthRecordPublic, LoginRequest, StyleSpec } from '../models/account';
+import { Account, AccountList, AuthRecordPublic, LoginRequest, StyleSpec } from '../models/account';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../environment/environment';
 import { ResponseObj } from '../models/standard';
@@ -23,6 +23,37 @@ export type LoginResultHandler = (res: LoginResult)=> void;
 export class AuthService {
 
   account: WritableSignal<AccountList | undefined> = signal<AccountList | undefined>(undefined);
+
+  accountAuth: WritableSignal<string> = signal<string>("");
+
+  setAccountAuth(auth?: string) {
+    if(!this.account()?.mainAccount) return;
+    let accountlist = this.account()?.brandAccounts;
+    if(!auth){
+      auth = localStorage.getItem(`${environment.app_name}_accountAuth`) || this.account()?.mainAccount.id;
+      let account = accountlist?.find((account: Account)=> account.id == auth);
+      if(!account)
+        auth = this.account()?.mainAccount.id;
+    }
+    this.accountAuth.set(auth || this.account()?.mainAccount.id || "");
+  }
+
+  get currentDisplayName(): string {
+    let account = this.account()?.brandAccounts.find((account: Account)=> account.id == this.accountAuth());
+    if(!account) return "";
+    return account.displayName;
+  }
+
+  get currentAccountId(): string {
+    let account = this.account()?.brandAccounts.find((account: Account)=> account.id == this.accountAuth());
+    if(!account) return "";
+    return account.id;
+  }
+
+  get currentAccount(): Account | undefined {
+    let account = this.account()?.brandAccounts.find((account: Account)=> account.id == this.accountAuth());
+    return account;
+  }
 
   onLoginSuccess() {
 
@@ -78,6 +109,8 @@ export class AuthService {
       next: (value: AccountList) => {
         this.account.set(value);
 
+        this.setAccountAuth();
+
         // To-Do: Handle login Success
         this.onLoginSuccess();
 
@@ -95,6 +128,8 @@ export class AuthService {
     this.client.post<AccountList>(`${environment.user_service_url}/Login`, loginRequest).subscribe({
       next: (value: AccountList) => {
         this.account.set(value);
+
+        this.setAccountAuth();
 
         // To-Do: Handle login Success
         this.onLoginSuccess();
