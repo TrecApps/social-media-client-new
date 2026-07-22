@@ -1,4 +1,4 @@
-<div class="top-bar" [style]="'zIndex:' + zIndex" [ngClass]="'element-container-' + styleService.style">
+<div class="top-bar" [style]="'zIndex:' + zIndex" [ngClass]="'element-container-' + styleService.style()">
   <div class="top-bar-child" [ngClass]="appStyleClass">
     @if (logoFirst && logoSrc) {
       <div class="logo-section">
@@ -55,10 +55,10 @@
       <div class="profile-section"  (click)="onFocusProfile($event)">
         <ng-content select="profile-ext" style="height: 100%"></ng-content>
         <div class="profile-img">
-          <img [src]="basicImageUrl + authService.account()?.activeAccount?.id" (error)="imageError($event)">
+          <img [src]="basicImageUrl + authService.account()?.currentAccount?.id" (error)="imageError($event)">
         </div>
         <div class="profile-name">
-          {{ authService.account()?.activeAccount?.displayName }}
+          {{ authService.account()?.currentAccount?.displayName }}
         </div>
       </div>
     }
@@ -157,7 +157,7 @@
         style="border-radius: 50%; overflow: hidden;"
         (click)="onFocusProfile($event)"
         >
-        <img [src]="basicImageUrl + authService.account()?.activeAccount?.id" (error)="imageError($event)">
+        <img [src]="basicImageUrl + authService.account()?.currentAccount?.id" (error)="imageError($event)">
         <div [ngClass]="divLineClass"></div>
       </div>
     }

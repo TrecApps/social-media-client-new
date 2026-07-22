@@ -90,7 +90,7 @@ export interface Account {
 export interface AccountList {
     mainUserAccount: UserAccount;
     mainAccount: Account;
-    activeAccount: Account | undefined;
+    currentAccount: Account | undefined;
     brandAccounts: Account[];
     session: Session;
     authMethods: AuthMethod[];

@@ -94,7 +94,7 @@ export class ProfileService {
     let profileId = "";
       let list = this.authService.account();
     if(list){
-    profileId = list.activeAccount?.id || list.mainAccount.id;
+    profileId = list.currentAccount?.id || list.mainAccount.id;
     } else return throwError(() => {
       let ret = new ResponseObj();
       ret.message = ("not logged on!");

@@ -29,7 +29,7 @@
         <div class="profile-name-holder">{{profileService.authService.currentDisplayName}}</div>
     </div>
 
-    @if((createUser && profileService.authService.account()?.activeAccount != profileService.authService.account()?.mainAccount)){
+    @if((createUser && profileService.authService.account()?.currentAccount != profileService.authService.account()?.mainAccount)){
 
     <div appElementItemDirective>
         <h2>Profile to be Created</h2>
@@ -38,7 +38,7 @@
                 <img [src]="getProfileImageLink()" (error)="imageFallback($event)">
             </div>
         </div>
-        <div class="profile-name-holder">{{ (profileService.authService.account()?.activeAccount?.displayName || "")}}</div>
+        <div class="profile-name-holder">{{ (profileService.authService.account()?.currentAccount?.displayName || "")}}</div>
     </div>
 
     }
