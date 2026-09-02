@@ -63,6 +63,15 @@ export class SortedList<T> implements Iterable<T> {
     clear() {
         this.items = [];
     }
+
+    returnCombined(newItems: T[]): SortedList<T> {
+        let ret = new SortedList<T>(this.sorter);
+        ret.items = this.items.slice();
+        for(let item of newItems){
+            ret.add(item);
+        }
+        return ret;
+    }
     
 
     /**
