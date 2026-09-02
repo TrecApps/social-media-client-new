@@ -1,7 +1,7 @@
 <div appElementItemDirective>
     <div class="post-bar" (click)="onEdit()">
         <div class="profile-holder">
-            <img [src]="imageSrc()" (error)="imageSrc.set(defaultImgSrc)" alt="Profile Picture">
+            <img #profileImage [src]="imageSrc()" [srcset]="imageSrc()" (error)="imageSrc.set(defaultImgSrc)" alt="Profile Picture">
         </div>
         <div class="profile-details" style="flex-grow: 1;">
             <p>

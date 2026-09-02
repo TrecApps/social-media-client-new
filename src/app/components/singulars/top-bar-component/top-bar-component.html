@@ -3,12 +3,12 @@
   [navOptions]="navOptions"
   (onNav)="onNavigate($event)"
   (onLoginRequestEmitter)="prepLogin()"
-  [basicImageUrl]="'https://test.trecapps.com/Images-api/Images/profile/'"
+  [basicImageUrl]="imageProfile"
   [items]="profileItemGroups"
   (onProfileItemClicked)="onProfilePanelSelect($event)"
   [blankProfileImg]="'non-profile.png'"
   [logoSrc]="logo"
-  [baseUserUrl]="'https://test.trecapps.com/Users'"
+  [baseUserUrl]="baseUsersUrl"
 >
 
   <app-search-bar-component></app-search-bar-component>

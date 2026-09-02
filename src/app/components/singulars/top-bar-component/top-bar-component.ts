@@ -25,7 +25,8 @@ export class TopBarComponent {
 
   navOptions: NavOption[];
 
-  
+  imageProfile: string = `${environment.image_service_url}/Images/profile/`;
+  baseUsersUrl: string = `${environment.user_service_url}/Users/`;
 
   logo: string = environment.logo_image;
 

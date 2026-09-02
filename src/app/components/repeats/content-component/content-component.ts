@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, model, ModelSignal, OnInit, Output, signal, viewChild, WritableSignal } from '@angular/core';
 import { HtmlRemoverPipe } from '../../../pipes/html-remover.pipe';
 import { TcFormatterPipe } from '../../../pipes/tc-formatter.pipe';
 import { ContentService } from '../../../services/content-service';
@@ -23,7 +23,7 @@ import { FullPosting, Posting } from '../../../models/Content';
   templateUrl: './content-component.html',
   styleUrl: './content-component.css'
 })
-export class ContentComponent implements AfterViewInit{
+export class ContentComponent implements OnInit {
 
 
   content: ModelSignal<FullPosting> = model({
@@ -70,6 +70,8 @@ export class ContentComponent implements AfterViewInit{
   @Output()
   onPrepReply: EventEmitter<FullPosting> = new EventEmitter<FullPosting>();
 
+  profileImageElement = viewChild<ElementRef<HTMLImageElement>>("profileImage");
+
 
   hasMore: WritableSignal<boolean> = signal(true);
 
@@ -91,9 +93,13 @@ export class ContentComponent implements AfterViewInit{
     return this.content().posting.posterId || this.content().posting.ownerId || '';
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
+    console.log("ContentComponent: ngOnInit()", this.getContentPoster());
+    this.imageSrc.set(`${environment.image_service_url}/Images/profile/${this.getContentPoster()}?app=${environment.app_name}`);
 
-    this.imageSrc.set(`${environment.image_service_url}Images/profile/${this.getContentPoster()}?app=${environment.app_name}`);
+    let actProfileImageElement = this.profileImageElement()?.nativeElement;
+    if(actProfileImageElement)
+      actProfileImageElement.src = this.imageSrc();
 
     this.reactionService.getReaction(this.content().posting.id).subscribe({
       next: (obj: ResponseObj) => {
