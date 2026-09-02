@@ -7,7 +7,7 @@
     background-position: center;
     position:absolute;
     left: 0px;
-    top: 0px;
+    top: 50px;
 }
 
 .main-area {
@@ -24,6 +24,7 @@
 }
 
 .set-profile-wrap {
+    /* position: absolute; */
     right: 10px;
     bottom: 10px;
 }
@@ -32,7 +33,7 @@
 	min-width: 100px;
 	max-width: 250px;
 	max-height: 250px;
-	display: flexbox;
+	display: flex;
 	justify-content: center;
 	align-items: center;
 	clip-path: circle();

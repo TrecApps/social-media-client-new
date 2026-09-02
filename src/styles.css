@@ -27,3 +27,57 @@
     max-height: 100vh;
     max-height: 1000px;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.error-panel {
+    width: 100%;
+    background-color: red;
+    color: white;
+    border: white solid 1px;
+    text-align: center;
+}
+
+.post-content {
+    margin: 10px;
+}
+
+.post-content img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+
+
+.flex-and-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.flex-and-center p {
+    margin: 0;
+}
+
+.flex-and-bottom {
+    display: flex;
+    justify-content: center;
+    align-items:end;
+}
+
+.notification-bubble{
+    padding: 10px;
+    background-color: red;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.notification-bubble p {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+}
