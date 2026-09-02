@@ -98,13 +98,13 @@ export class LoginComponent implements OnInit, AfterViewInit{
 
   blankSignal = signal(0);
 
-  invalidUsername: boolean = false;
+  invalidUsername: WritableSignal<boolean> = signal(false);
 
   stayLoggedIn: boolean = false;
 
   invalidCredentials: boolean = false;
 
-  checking: boolean = false;
+  checking: WritableSignal<boolean> = signal(false);
 
 
   switchMethodEntry(entry: AuthRecordEntry){
@@ -123,16 +123,16 @@ export class LoginComponent implements OnInit, AfterViewInit{
   submitUsername(){
 
 
-    if(this.checking) return;
-    this.checking = true;
+    if(this.checking()) return;
+    this.checking.set(true);
     this.authService.attemptUsername(this.username(), (methodList: AuthRecordPublic[] | undefined) => {
-      this.checking = false;
+      this.checking.set(false);
       if(!methodList){
-        this.invalidUsername = true;
+        this.invalidUsername.set(true);
         this.authMethodEntries.set(undefined);
         return;
       }
-      this.invalidUsername = false;
+      this.invalidUsername.set(false);
       this.authMethodEntries.set(methodList.map((value: AuthRecordPublic) => new AuthRecordEntry(value)));
 
     })

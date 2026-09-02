@@ -20,7 +20,10 @@
                 <label class="form-label">Username</label>
                 <input #usernameControl class="form-control" [(ngModel)]="username">
                 <br>
-                <button class="btn btn-primary" [disabled]="!username().trim().length || checking" (click)="submitUsername()">Submit</button>
+                @if(invalidUsername()){
+                    <p class="text-danger"><b>Invalid Username</b></p>
+                }
+                <button class="btn btn-primary" [disabled]="!username().trim().length || checking()" (click)="submitUsername()">Submit</button>
                 <button class="btn btn-info" (click)="switchToCreate()">Create Account</button>
             </div>
         } @else {
