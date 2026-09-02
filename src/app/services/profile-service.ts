@@ -197,7 +197,7 @@ export class ProfileService {
     })
   }
 
-  addFullPostingToSortedList(list: SortedList<FullPosting>, posting: Posting){
+  addFullPostingToSortedList(list: WritableSignal<SortedList<FullPosting>>, posting: Posting){
         let fullPosting: FullPosting = {
       posting,
       posterDetails: {
@@ -233,7 +233,8 @@ export class ProfileService {
     // ToDo: handle Module information
 
     // 
-    list.add(fullPosting);
+
+    list.set(list().returnCombined([fullPosting]));
   }
 
   addFullPostingToList(list: FullPosting[], posting: Posting) {

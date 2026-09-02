@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal, WritableSignal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environment/environment';
@@ -39,7 +39,7 @@ export class HomeComponent {
   parent: FullPosting | undefined;
 
 
-  outOfPosts: boolean = false;
+  outOfPosts: WritableSignal<boolean> = signal(false);
 
   mediaEvents: SocialMediaEvent[] = [];
 
@@ -105,7 +105,7 @@ export class HomeComponent {
         this.mediaEvents = this.mediaEvents.concat(event);
         this.page++;
         if(event.length < this.size){
-          this.outOfPosts = true;
+          this.outOfPosts.set(true);
         }
       }
     })
@@ -137,8 +137,12 @@ export class HomeComponent {
   }
 
   getProfileImageLink(): string {
-    if(!this.profileService.activeProfile()?.id) return "non-profile.png";
-    return `${environment.sm_profile_url}Profile/pic/${this.profileService.activeProfile()?.id}`;
+    let profile = this.profileService.presentProfile();
+    if(!profile) return "non-profile.png";
+
+    let app = `${environment.app_name}`
+
+    return `${environment.image_service_url}/Images/profile/${profile.id}?app=${app}` 
   }
 
   handlePrepReply(reply: FullPosting) {

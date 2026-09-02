@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
+import { Component, EventEmitter, input, Input, InputSignal, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
 import { ElementItemDirective } from '../../../directives/element-item-directive';
 import { BottomTickerComponent } from '../../Lib/bottom-ticker-component/bottom-ticker-component';
 import { DuoContentComponent } from '../../Lib/duo-content-component/duo-content-component';
@@ -35,8 +35,8 @@ class ShowWorkPerspective{
   styleUrl: './profile-details-component.css',
 })
 export class ProfileDetailsComponent {
-    @Input()
-  connectionStatus: string = '';
+    
+  connectionStatus: InputSignal<string> = input('');
 
   @Output()
   onNewContentPrepped: EventEmitter<void> = new EventEmitter<void>();
@@ -79,7 +79,9 @@ export class ProfileDetailsComponent {
   curTab: WritableSignal<string> = signal("fav");
 
 
-  postingList: SortedList<FullPosting> = new SortedList<FullPosting>((a: FullPosting, b: FullPosting) => {
+  private generateBlankPostingList(): SortedList<FullPosting> {
+  
+    return new SortedList<FullPosting>((a: FullPosting, b: FullPosting) => {
     let bVal = 0;
     let aVal = 0;
     try{
@@ -95,7 +97,9 @@ export class ProfileDetailsComponent {
     }
     
     return bVal - aVal;
-  });
+  });}
+
+  postingList: WritableSignal<SortedList<FullPosting>> = signal(this.generateBlankPostingList());
 
   outOfPosts: WritableSignal<boolean> = signal(false);
   postingPage: WritableSignal<number> = signal(0);
@@ -229,7 +233,7 @@ export class ProfileDetailsComponent {
       let targetIndex = posting.contents.length - 1;
       let newContent = posting.contents.at(targetIndex);
       if(newContent){
-        this.postingList.items.forEach((reply: FullPosting) => {
+        this.postingList().items.forEach((reply: FullPosting) => {
           if(reply.posting.id == edit?.contentId && targetIndex >= 0){      
             reply.posting.contents.push(newContent);  
           }
@@ -277,7 +281,7 @@ export class ProfileDetailsComponent {
     let prof = this.profileService.presentProfile();
     if(!prof) return;
     if(brandNew){
-      this.postingList.clear();
+      this.postingList.set(this.generateBlankPostingList());
       this.postingPage.set(0);
       this.outOfPosts.set(false);
     }

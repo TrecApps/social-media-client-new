@@ -70,7 +70,7 @@
         }
 
         <app-bottom-ticker-component 
-            [stillMore]="!outOfPosts"
+            [stillMore]="!outOfPosts()"
             (onAppear)="retrievePosts(false)"
         />
     </div>

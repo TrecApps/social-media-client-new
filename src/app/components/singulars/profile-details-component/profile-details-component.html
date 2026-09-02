@@ -1,11 +1,11 @@
 <app-duo-content-component [mainText]="'About ' + getProfileDisplayName()">
-    <div class="right-content">
+    <div id="right-content" class="right-content">
         <div appElementItemDirective style="padding: 10px">
             <p>
                 {{ profileService.presentProfile()?.aboutMe }} 
             </p>
         </div>
-                <app-tab-component [tabs]="tabOptions" (tabSelect)="curTab.set($event)">
+        <app-tab-component [tabs]="tabOptions" (tabSelect)="curTab.set($event)">
         @if(curTab() == 'edu'){
 
             <div appElementContainerDirective>
@@ -54,14 +54,14 @@
 
 
     <div>
-        @if(connectionStatus == 'SELF_PROFILE' || connectionStatus == 'CONNECTED'){
+        @if(connectionStatus() == 'SELF_PROFILE' || connectionStatus() == 'CONNECTED'){
             <div class="item-button" appElementItemDirective (click)="prepareNewPosting(undefined)">
                 <p>Post to Profile</p>
             </div>
         }
 
 
-        @for(posting of postingList; track posting){
+        @for(posting of postingList(); track posting){
             <app-content-component 
                 [content]="posting"
                 (onPrepReply)="prepareNewPosting($event)"

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ResponseObj } from '../../../models/standard';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -47,7 +47,7 @@ export class ProfileComponent {
 
   showGallery: boolean = false;
 
-  connectionStatus: string = "";
+  connectionStatus: WritableSignal<string> = signal("");
 
   galleryPurpose: ImageSelectionPurpose = ImageSelectionPurpose.SELECT;
 
@@ -73,12 +73,12 @@ export class ProfileComponent {
         }
         this.connectionEntry2 = entry.asFollower; 
         this.retrievingProfile = false;
-        this.connectionStatus = this.getConnectionStatus();
+        this.connectionStatus.set(this.getConnectionStatus());
       },
       error: (er: any) => {
         this.connectionEntryError = Number.isInteger(er.status) && er.status >= 500;
         this.retrievingProfile = false;
-        this.connectionStatus = this.getConnectionStatus();
+        this.connectionStatus.set(this.getConnectionStatus());
       }
     })
   }
@@ -124,7 +124,7 @@ export class ProfileComponent {
         this.profileService.searchedProfile.set(undefined);
         this.connectionEntry = undefined;
         this.retrievingProfile = false;
-        this.connectionStatus = this.getConnectionStatus();
+        this.connectionStatus.set(this.getConnectionStatus());
         this.attemptPostRetrival();//profileDetails.retrievePosts(true);
       } else {
 
@@ -141,7 +141,7 @@ export class ProfileComponent {
               if(Number.isInteger(er.status)) {
                 this.retrievalStatus = er.status;
               } else this.retrievalStatus = 500;
-              this.connectionStatus = this.getConnectionStatus();
+              this.connectionStatus.set(this.getConnectionStatus());
             }
           })
       }
@@ -226,7 +226,7 @@ export class ProfileComponent {
           this.connectionEntry.accepted = new Date();
         } else this.connectionEntry = undefined;
         this.updatingConnection = false;
-        this.connectionStatus = this.getConnectionStatus();
+        this.connectionStatus.set(this.getConnectionStatus());
       }, 
       error: () => {
         this.updatingConnection = false;
@@ -253,7 +253,7 @@ export class ProfileComponent {
             made: new Date(),
             accepted: undefined
           }
-          this.connectionStatus = this.getConnectionStatus();
+          this.connectionStatus.set(this.getConnectionStatus());
         }
       })
 
