@@ -155,7 +155,7 @@ export class ProfileComponent {
     let app = `${environment.app_name}`
     
     if(useCover){
-      app = `cover-${app}&fallback-false`;
+      app = `cover-${app}&fallback=false`;
     }
 
     return `${environment.image_service_url}/Images/profile/${profile.id}?app=${app}` 

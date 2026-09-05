@@ -473,8 +473,8 @@ export class ImagePanelComponent {
       }
     }
 
-    if(this.mbLimit && selectedFile.size >= (this.mbLimit() * bytesInMB) &&
-      !confirm(`Your image exceeds the ${this.mbLimit} MB limit for moderation.\n You can still upload the image, but you'll need to contact\n
+    if(this.mbLimit() && selectedFile.size >= (this.mbLimit() * bytesInMB) &&
+      !confirm(`Your image exceeds the ${this.mbLimit()} MB limit for moderation (detected size: ~${(selectedFile.size / bytesInMB).toFixed(2)} MB).\n You can still upload the image, but you'll need to contact\n
         the Administrator to use it as a Profile Image or Cover Photo`)){
           return;
     }

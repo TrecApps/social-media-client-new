@@ -62,9 +62,9 @@ export class ProfileDetailsComponent {
 
   tabOptions: TabOption[] = [
     {
-      showTitle: "Favorites",
-      actTitle: "fav"
-    }, {
+    //   showTitle: "Favorites",
+    //   actTitle: "fav"
+    // }, {
       showTitle: "Education",
       actTitle: "edu"
     }, {
