@@ -9,7 +9,7 @@
         @if(curTab() == 'edu'){
 
             <div appElementContainerDirective>
-                @if(profileService.searchedProfile == undefined){
+                @if(profileService.searchedProfile() == undefined || profileService.searchedProfile()?.id == profileService.activeProfile()?.id){
                     <button class="btn btn-primary" (click)="prepNewEducation()">Add Education</button>
                 }
                 
@@ -25,7 +25,7 @@
 
         } @else if (curTab() == 'work') {
             <div appElementContainerDirective>
-                @if(profileService.searchedProfile == undefined){
+                @if(profileService.searchedProfile() == undefined || profileService.searchedProfile()?.id == profileService.activeProfile()?.id){
                     <button class="btn btn-primary" (click)="prepNewPerspective()">Add Work Perspective</button>
                 }
 
@@ -47,6 +47,8 @@
             </div>
         } @else if (curTab() == 'conn'){
             <app-connection-list-component />
+        } @else {
+            <h1>{{ curTab() }}</h1>
         }
         </app-tab-component>
 
@@ -90,7 +92,7 @@
     <app-popup-component (onClose)="setNewWorkPerspective(undefined)">
         <app-work-perspective-component
             [(perspective)]="showWorkPerspective().workPerspective"
-            [isOwned]="profileService.searchedProfile == undefined"
+            [isOwned]="profileService.searchedProfile() == undefined || profileService.searchedProfile()?.id == profileService.activeProfile()?.id"
             (onUpdate)="updateWorkExperience(showWorkPerspective().workPerspective,false)"
             (onDelete)="updateWorkExperience(showWorkPerspective().workPerspective, true)"
         />

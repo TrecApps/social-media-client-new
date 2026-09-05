@@ -1,4 +1,4 @@
-import { Component, Input, model, ModelSignal } from '@angular/core';
+import { Component, EventEmitter, Input, model, ModelSignal, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkExp } from '../../../models/WorkExperience';
 import { DatePipe } from '@angular/common';
@@ -20,6 +20,9 @@ export class WorkExperienceComponent {
   isOwned: boolean = false;
 
   isEditing: boolean = false;
+
+  @Output()
+  onCloseExperience = new EventEmitter();
 
   experience: ModelSignal<WorkExp> = model<WorkExp>(new WorkExp());
 

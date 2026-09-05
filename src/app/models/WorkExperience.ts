@@ -20,7 +20,7 @@ export class WorkExp {
 
     startDate: Date = new Date();
 
-    endDate: Date | undefined;
+    endDate: Date | undefined = new Date();
 
     title: string = "";
 

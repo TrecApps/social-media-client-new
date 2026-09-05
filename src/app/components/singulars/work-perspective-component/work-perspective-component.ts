@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, model, ModelSignal, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, InputSignal, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { FeatureShow, featureShowList } from '../../../models/Model';
@@ -22,11 +22,9 @@ import { TagInputComponent } from '../../Lib/tag-input-component/tag-input-compo
 })
 export class WorkPerspectiveComponent {
 
-  @Input()
-  isOwned: boolean = false;
+  isOwned: InputSignal<boolean> = input(false);
 
-  @Input()
-  isNew: boolean = false;
+  isNew: InputSignal<boolean> = input(false);
 
   @Output()
   onUpdate = new EventEmitter<WorkExpHolder>();
@@ -34,7 +32,7 @@ export class WorkPerspectiveComponent {
   @Output()
   onDelete = new EventEmitter();
 
-  isEditing: boolean = false;
+  isEditing: WritableSignal<boolean> = signal(false);
 
   perspective: ModelSignal<WorkExpHolder> = model<WorkExpHolder>(new WorkExpHolder());
 

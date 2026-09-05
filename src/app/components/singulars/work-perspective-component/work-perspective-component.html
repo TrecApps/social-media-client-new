@@ -1,9 +1,9 @@
 <div appElementContainerDirective class="form" style="min-width: 80vw; max-height: 95vh; overflow-y: scroll;">
-    @if(isOwned && !isEditing){
-        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = true">Edit Perspective</button>
+    @if(isOwned() && !isEditing()){
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing.set(true)">Edit Perspective</button>
     }
 
-    @if(!isEditing){
+    @if(!isEditing()){
         <div appElementItemDirective>
             <p><b>Perspective: </b> 
             @for(p of perspective().perspective; track p){
@@ -17,7 +17,7 @@
         </div>
     }
 
-    @if(isOwned && isEditing){
+    @if(isOwned() && isEditing()){
     <div appElementItemDirective>
         <h2>Work Perspective</h2>
         <div class="form-group">
@@ -39,7 +39,7 @@
                 (change)="perspective().allowAnalytics = $event.target.checked">
             <label class="form-check-label">Allow Analytics</label>
         </div>
-        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing = false">Stop Edits</button>
+        <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="isEditing.set(false)">Stop Edits</button>
     </div>
     }
     
@@ -70,7 +70,7 @@
 
     
     }
-    @if(isOwned){
+    @if(isOwned()){
         <button class="btn btn-primary" style="width: 100%; margin: 5px;" (click)="onUpdate.emit()">Update</button>
         <button class="btn btn-danger" style="width: 100%; margin: 5px;" (click)="onDelete.emit()">Remove</button>
     }
@@ -81,8 +81,9 @@
 
     <app-popup-component  (onClose)="activeExperience = undefined" >
 
-        <app-work-experience-component [isOwned]="isOwned"
+        <app-work-experience-component [isOwned]="isOwned()"
             [(experience)]="activeExperience"
+            (onCloseExperience)="activeExperience = undefined"
         />
 
             
