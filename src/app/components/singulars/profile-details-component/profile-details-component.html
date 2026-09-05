@@ -80,7 +80,7 @@
 @if(showEducation()) {
     <app-popup-component (onClose)="showEducation.set(undefined)">
         <app-edit-education 
-        [isSelf]="profileService.searchedProfile == undefined"
+        [isSelf]="profileService.searchedProfile() == undefined || profileService.searchedProfile()?.id == profileService.activeProfile()?.id"
             [(education)]="showEducation" 
             (onUpdate)="updateEducation(true)"
             (onDelete)="updateEducation(false)"

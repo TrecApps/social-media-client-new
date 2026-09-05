@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, input, model, ModelSignal, Output } from '@angular/core';
+import { Component, EventEmitter, Input, input, model, ModelSignal, Output, signal, WritableSignal } from '@angular/core';
 import { Education, EduDegree, EduDegreeMap, eduDegreeMap, monthList } from '../../../models/Education';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environment/environment';
@@ -32,7 +32,7 @@ export class EditEducation {
   @Output()
   onDelete = new EventEmitter<void>();
 
-  isEditing: Education | undefined;
+  isEditing: Education | undefined = undefined;
 
   schoolSelection: BrandSearchResult | undefined;
 
@@ -43,6 +43,12 @@ export class EditEducation {
   baseUrl: string = environment.resource_service_url;
 
   visibilityList = featureShowList;
+
+  constructor() {
+    this.education.subscribe((edu) => {
+
+    });
+  }
 
   onSubjectAddEvent(majors: boolean, event: any){
     //let chEvent
@@ -66,19 +72,30 @@ export class EditEducation {
     } else {
       if(!this.isEditing.minors.includes(subject)) this.isEditing.minors.push(subject);
     }
+    this.education.set({...this.isEditing});
   }
 
   removeSubject(majors: boolean, subject: Subject){
     if(!this.isEditing) return;
     if(majors) this.isEditing.majors = this.isEditing.majors.filter((val: Subject) => val != subject);
     else this.isEditing.minors = this.isEditing.minors.filter((val: Subject) => val != subject);
+    this.education.set({...this.isEditing});
   }
 
   onSchoolSelected(event: BrandSearchResult){
-    if(!this.isEditing) return;
-    this.isEditing.schoolName = event.brand.names[0];
-    this.isEditing.schoolId = event.brand.id;
+    let isEditing = this.isEditing;
+    if(!isEditing) return;
+    isEditing.schoolName = event.brand.names[0];
+    isEditing.schoolId = event.brand.id;
     this.schoolSelection = event;
+    this.isEditing = {...isEditing};
+  }
+
+  doUpdate(){
+    if(!this.isEditing) return;
+    this.education.set({...this.isEditing});
+    this.onUpdate.emit();
+    this.isEditing = undefined;
   }
 
   monthList = monthList;

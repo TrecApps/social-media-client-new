@@ -137,7 +137,7 @@
                 </div>
             </div>
 
-            <button (click)="onUpdate.emit(); isEditing = undefined;" class="btn btn-primary">Submit</button>
+            <button (click)="doUpdate()" class="btn btn-primary">Submit</button>
             <button (click)="onDelete.emit();" class="btn btn-danger">Delete</button>
             <button (click)="isEditing = undefined" class="btn btn-white">Cancel</button>
         } @else if(education()) {
