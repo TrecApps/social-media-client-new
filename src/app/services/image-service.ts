@@ -19,7 +19,7 @@ export class ImageService {
     return this.authService.account()?.mainAccount.id || "";
   }
 
-  postImage(entry: ImageEntry, uploadMode: ImageUploadMode): Observable<ResponseObj>{
+  postImage(entry: ImageEntry, uploadMode: ImageUploadMode, isCover: boolean = false): Observable<ResponseObj>{
     let data = entry.src.split(',', 2);
 
     let type = data[0].replace("data:", "").replace(";base64", "");
@@ -27,6 +27,10 @@ export class ImageService {
       mode: ImageUploadMode[uploadMode],
       app: entry.record.app
     })
+
+    if(isCover && ImageUploadMode[uploadMode] == ImageUploadMode[ImageUploadMode.preProfile]){
+      params = params.append("isCover", "true");
+    }
 
     if(entry.record.name.trim().length){
       params = params.append("name", entry.record.name.trim());

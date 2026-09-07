@@ -67,6 +67,8 @@ export class ImagePanelComponent {
   maxHeight: InputSignal<string> = input<string>('100%');
 
   defaultPurpose: ImageSelectionPurpose = ImageSelectionPurpose.BLANK;
+  profilePurpose: ImageSelectionPurpose = ImageSelectionPurpose.PROFILE;
+  coverPurpose: ImageSelectionPurpose = ImageSelectionPurpose.COVER;
   
 
   @Output()
@@ -181,6 +183,13 @@ export class ImagePanelComponent {
     this.imageEntries.set([]);
     this.currentImagePage.set(0);
     this.retrieveImages();
+
+    switch(this.purpose()){
+      case ImageSelectionPurpose.PROFILE:
+      case ImageSelectionPurpose.COVER:
+        this.currentUploadMode.set(this.uploadModes[2]);
+        break;
+    }
   }
 
   retrievingImages: boolean = false;
@@ -424,7 +433,7 @@ export class ImagePanelComponent {
   commenceImageUpload(){
     let currentImage = this.currentImage();
     if(currentImage && !currentImage.record.id){
-      this.imageService.postImage(currentImage, this.currentUploadMode().mode).subscribe({
+      this.imageService.postImage(currentImage, this.currentUploadMode().mode, this.purpose() == ImageSelectionPurpose.COVER).subscribe({
         next: (resp: ResponseObj) => {
           if(currentImage?.record){
             currentImage.record.id = resp.id?.toString();
