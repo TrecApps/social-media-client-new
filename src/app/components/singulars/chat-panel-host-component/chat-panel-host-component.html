@@ -1,0 +1,18 @@
+<!--
+  Chat panel host — fixed bottom-right flex row of open panels.
+  Rightmost entry is the most recently focused panel (ordering maintained by
+  PanelManagerService.openPanels).
+-->
+<div class="chat-panel-host">
+  @for (entry of openPanels(); track trackByConversationId($index, entry)) {
+    <div
+      class="chat-panel-slot"
+      [class.chat-panel-slot--focused]="entry.isFocused"
+    >
+      <app-chat-panel-component
+        [conversation]="entry.conversation"
+        [isFocused]="entry.isFocused"
+      />
+    </div>
+  }
+</div>

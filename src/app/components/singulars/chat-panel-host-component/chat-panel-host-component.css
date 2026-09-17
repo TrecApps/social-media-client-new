@@ -1,0 +1,84 @@
+/* ── Host anchor ─────────────────────────────────────────────────────────── */
+:host {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  /* Let clicks pass through the empty host area; individual panels re-enable. */
+  pointer-events: none;
+}
+
+/* ── Panel row ───────────────────────────────────────────────────────────── */
+.chat-panel-host {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.75rem;
+  padding: 0 0.75rem;
+}
+
+/* ── Individual panel slot ───────────────────────────────────────────────── */
+/*
+  Each panel is a fixed 320px-wide column anchored to the bottom of the viewport.
+  When ChatPanelComponent (task 11) replaces the placeholder, it inherits this
+  320px width from its slot / applies it itself.
+*/
+.chat-panel-slot {
+  width: 320px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--panel-bg, #fff);
+  border: 1px solid var(--border, #d0d7de);
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  /* Re-enable interaction on the panels themselves. */
+  pointer-events: auto;
+}
+
+/* ── Focused panel distinction ───────────────────────────────────────────── */
+/*
+  Validates: Requirements 3.6 — visually distinguish the Focused_Panel via an
+  elevated border and header highlight.
+*/
+.chat-panel-slot--focused {
+  border-color: var(--primary, #007bff);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Placeholder header / body (removed when task 11 lands) ──────────────── */
+.chat-panel-slot__header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--panel-header-bg, #f6f8fa);
+  border-bottom: 1px solid var(--border, #d0d7de);
+}
+
+.chat-panel-slot--focused .chat-panel-slot__header {
+  background-color: var(--primary-light, #e7f1ff);
+}
+
+.chat-panel-slot__title {
+  font-size: 0.8rem;
+  font-family: monospace;
+  color: var(--text-primary, #333);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-panel-slot__body {
+  flex: 1 1 auto;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+
+.chat-panel-slot__hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted, #666);
+}

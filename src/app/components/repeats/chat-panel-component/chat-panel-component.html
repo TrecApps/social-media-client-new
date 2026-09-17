@@ -1,0 +1,292 @@
+<!--
+  Chat panel — core scaffold (task 11.1).
+  Displays message history in chronological order with initial + paginated loads.
+  Send / edit / react affordances and WebSocket event rendering are added in
+  tasks 12.x and 13.x.
+-->
+<div
+  class="chat-panel"
+  [class.chat-panel--focused]="isFocused"
+  (click)="onPanelClick()"
+  (keydown)="onKeydown()"
+>
+  <!-- Header — visually distinguished when focused (Req 3.6) -->
+  <header
+    class="chat-panel__header"
+    [class.chat-panel__header--focused]="isFocused"
+  >
+    <span class="chat-panel__title" title="{{ conversationId }}">
+      {{ conversationId }}
+    </span>
+    <button
+      class="chat-panel__close"
+      type="button"
+      aria-label="Close conversation"
+      (click)="close(); $event.stopPropagation()"
+    >
+      &times;
+    </button>
+  </header>
+
+  <!-- Message list -->
+  <div
+    #messageList
+    class="chat-panel__messages"
+    (scroll)="onScroll()"
+  >
+    <!-- Top pagination loading indicator (Req 4.5) -->
+    @if (loadingMore()) {
+      <div class="chat-panel__loading-more" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Loading older messages&hellip;</span>
+      </div>
+    }
+
+    <!-- Initial load indicator (Req 4.2) — no partial list shown while loading -->
+    @if (loadingMessages()) {
+      <div class="chat-panel__loading" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Loading messages&hellip;</p>
+      </div>
+    } @else {
+      <!-- Inline load error (Req 4.7) -->
+      @if (loadError()) {
+        <div class="chat-panel__error" role="alert">
+          {{ loadError() }}
+        </div>
+      }
+
+      <!-- Messages in chronological order: oldest at top, newest at bottom (Req 4.3) -->
+      @for (message of messages(); track message.id) {
+        <div class="chat-panel__message">
+          <div class="chat-panel__message-meta">
+            <span class="chat-panel__message-author" title="{{ message.profile }}">
+              {{ message.profile }}
+            </span>
+            <span class="chat-panel__message-time">
+              {{ message.firstMade | relativeTime }}
+            </span>
+          </div>
+          @if (isEditing(message.id)) {
+            <!--
+              Edit mode (Req 14.2–14.7): the message display is replaced by an
+              editable field pre-filled from the most recent version. Confirm
+              posts the trimmed text; cancel exits without an API call.
+            -->
+            <div class="chat-panel__edit">
+              <textarea
+                class="chat-panel__edit-input"
+                rows="1"
+                aria-label="Edit message text"
+                [value]="editState()?.draft"
+                [disabled]="editPending()"
+                (input)="onEditInput($any($event.target).value)"
+                (keydown)="onEditKeydown($event)"
+                (click)="$event.stopPropagation()"
+              ></textarea>
+
+              <!-- Validation for empty/whitespace-only confirm (Req 14.4) -->
+              @if (editValidationError()) {
+                <div class="chat-panel__edit-validation" role="alert">
+                  {{ editValidationError() }}
+                </div>
+              }
+
+              <!-- Inline error on failed edit; draft retained (Req 14.6) -->
+              @if (editError()) {
+                <div class="chat-panel__edit-error" role="alert">
+                  {{ editError() }}
+                </div>
+              }
+
+              <div class="chat-panel__edit-actions">
+                <button
+                  class="chat-panel__edit-save"
+                  type="button"
+                  [disabled]="editPending()"
+                  (click)="confirmEdit(); $event.stopPropagation()"
+                >
+                  @if (editPending()) {
+                    <span class="spinner" aria-hidden="true"></span>
+                  } @else {
+                    Save
+                  }
+                </button>
+                <button
+                  class="chat-panel__edit-cancel"
+                  type="button"
+                  [disabled]="editPending()"
+                  (click)="cancelEdit(); $event.stopPropagation()"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="chat-panel__message-body">
+              @if (message.messageVersions.length > 0) {
+                {{ message.messageVersions[message.messageVersions.length - 1].message }}
+              }
+              <!-- "edited" indicator, shown iff more than one version (Req 10.2) -->
+              @if (isEdited(message)) {
+                <span class="chat-panel__edited-indicator" title="This message was edited">
+                  (edited)
+                </span>
+              }
+            </div>
+
+            <!-- Edit affordance, shown exclusively for the author (Req 14.1) -->
+            @if (canEditMessage(message)) {
+              <div class="chat-panel__edit-bar">
+                <button
+                  class="chat-panel__edit-toggle"
+                  type="button"
+                  aria-label="Edit message"
+                  (click)="startEdit(message); $event.stopPropagation()"
+                >
+                  Edit
+                </button>
+              </div>
+            }
+          }
+
+          <!--
+            Reaction affordance (Req 13.1) — emoji picker button revealed on
+            hover/tap. While a react request is in-flight the affordance is
+            disabled to prevent duplicate submissions (Req 13.3).
+          -->
+          <div class="chat-panel__reaction-bar">
+            <button
+              class="chat-panel__react-toggle"
+              type="button"
+              aria-label="Add reaction"
+              aria-haspopup="true"
+              [attr.aria-expanded]="isReactionPickerOpen(message.id)"
+              [disabled]="isReactionPending(message.id)"
+              (click)="toggleReactionPicker(message.id); $event.stopPropagation()"
+            >
+              @if (isReactionPending(message.id)) {
+                <span class="spinner" aria-hidden="true"></span>
+              } @else {
+                <span aria-hidden="true">🙂﹢</span>
+              }
+            </button>
+
+            @if (isReactionPickerOpen(message.id)) {
+              <div class="chat-panel__reaction-picker" role="menu">
+                @for (emoji of reactionOptions; track emoji) {
+                  <button
+                    class="chat-panel__reaction-option"
+                    type="button"
+                    role="menuitem"
+                    [attr.aria-label]="'React with ' + emoji"
+                    [disabled]="isReactionPending(message.id)"
+                    (click)="react(message.id, emoji); $event.stopPropagation()"
+                  >
+                    {{ emoji }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Inline reaction error; existing reactions are left unchanged (Req 13.4) -->
+          @if (reactionError(message.id)) {
+            <div class="chat-panel__reaction-error" role="alert">
+              {{ reactionError(message.id) }}
+            </div>
+          }
+
+          <!--
+            Aggregated reaction counts (Req 9.2 / Property 13). The section is
+            rendered only when there is at least one displayable reaction.
+          -->
+          @if (reactionCounts(message).length > 0) {
+            <div class="chat-panel__reactions">
+              @for (r of reactionCounts(message); track r.emoji) {
+                <span class="chat-panel__reaction-count">
+                  <span aria-hidden="true">{{ r.emoji }}</span>
+                  <span class="chat-panel__reaction-number">{{ r.count }}</span>
+                </span>
+              }
+            </div>
+          }
+
+          <!--
+            Read-receipt indicator (Req 8.2 / Property 11). Shown beneath a
+            message when at least one non-self participant has seen it.
+          -->
+          @if (hasReadReceipt(message)) {
+            <div class="chat-panel__read-receipt" title="Seen">
+              <span aria-hidden="true">✓✓</span>
+              <span class="chat-panel__read-receipt-label">Seen</span>
+            </div>
+          }
+        </div>
+      } @empty {
+        @if (!loadError()) {
+          <p class="chat-panel__empty">No messages yet.</p>
+        }
+      }
+    }
+  </div>
+
+  <!--
+    Unread-message notification badge (Req 7.4 / 7.5). Shown when new messages
+    arrive while the user is scrolled away from the bottom. Clicking it scrolls
+    to the bottom and resets the count.
+  -->
+  @if (unreadBadgeCount() > 0) {
+    <button
+      class="chat-panel__unread-badge"
+      type="button"
+      (click)="onUnreadBadgeClick(); $event.stopPropagation()"
+    >
+      {{ unreadBadgeCount() }}
+      {{ unreadBadgeCount() === 1 ? 'new message' : 'new messages' }} &darr;
+    </button>
+  }
+
+  <!-- Compose area — send a plain-text message (Req 11.1–11.6) -->
+  <footer class="chat-panel__compose">
+    <!-- Inline send error; draft is retained so the user can retry (Req 11.4) -->
+    @if (sendError()) {
+      <div class="chat-panel__send-error" role="alert">
+        {{ sendError() }}
+      </div>
+    }
+
+    <!-- Validation message for empty/whitespace-only submit (Req 11.6) -->
+    @if (sendValidationError()) {
+      <div class="chat-panel__send-validation" role="alert">
+        {{ sendValidationError() }}
+      </div>
+    }
+
+    <div class="chat-panel__compose-row">
+      <textarea
+        #composeInput
+        class="chat-panel__compose-input"
+        rows="1"
+        placeholder="Type a message&hellip;"
+        aria-label="Message text"
+        [value]="draft()"
+        [disabled]="sendPending()"
+        (input)="onDraftInput($any($event.target).value)"
+        (keydown)="onComposeKeydown($event)"
+      ></textarea>
+      <button
+        class="chat-panel__send"
+        type="button"
+        [disabled]="sendPending()"
+        (click)="send(); $event.stopPropagation()"
+      >
+        @if (sendPending()) {
+          <span class="spinner" aria-hidden="true"></span>
+        } @else {
+          Send
+        }
+      </button>
+    </div>
+  </footer>
+</div>
