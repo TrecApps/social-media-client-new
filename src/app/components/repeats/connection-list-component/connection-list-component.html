@@ -19,7 +19,7 @@
         <div style="flex-grow: 1;"></div>
 
         @if(mode == "connect"){
-            <!-- <button class="btn btn-primary" (click)="prepMessage(det.profileDetails.id)">Message</button> -->
+            <button class="btn btn-primary" (click)="prepMessage(det.profileDetails.id)">Message</button>
             <button class="btn btn-danger" (click)="endConnection(det)">End Connection</button>
         } @else if (mode == 'followee') {
             <button class="btn btn-danger" (click)="endConnection(det)">Unfollow</button>

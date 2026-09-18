@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../environment/environment';
 import { Conversation, ConversationEvent, Message, WebSocketConnectionStatus } from '../models/Messaging';
+import { AuthService } from './auth-service';
 
 const plainTextHeaders = new HttpHeaders({ 'Content-Type': 'text/plain' });
 const BASE = environment.message_service_url;
@@ -83,6 +84,8 @@ function isConversationEvent(frame: unknown): frame is ConversationEvent {
   );
 }
 
+export type UseConversationCallback = (conversation: Conversation) => void;
+
 /**
  * MessagingService with WebSocket Support
  *
@@ -101,7 +104,9 @@ function isConversationEvent(frame: unknown): frame is ConversationEvent {
   providedIn: 'root',
 })
 export class MessagingService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  conversations: Conversation[] = [];
 
   /**
    * Fetches all conversations for the current app.
@@ -111,7 +116,7 @@ export class MessagingService {
    */
   getConversations(): Observable<Conversation[]> {
     const params = new HttpParams().set('appId', APP_ID);
-    return this.http
+    let ret = this.http
       .get<Conversation[]>(`${BASE}/Conversations`, {
         params,
         withCredentials: true,
@@ -127,7 +132,13 @@ export class MessagingService {
             return { ...conv, latestActivity };
           })
         )
-      );
+      ).pipe(shareReplay(1));
+
+      ret.subscribe((conversations) => {
+        this.conversations = conversations;
+      });
+
+      return ret;
   }
 
   /**
@@ -141,6 +152,36 @@ export class MessagingService {
       params,
       withCredentials: true,
     });
+  }
+
+  setUpConversation(profileIds: string[], useConversation: UseConversationCallback): void {
+    const params = new HttpParams().set('appId', APP_ID);
+
+    let currentAccountId = this.authService.currentAccountId;
+    let fullProfileIds = [currentAccountId, ...profileIds];
+
+    fullProfileIds.sort((a, b) => a.localeCompare(b));
+
+    let targetConversation = this.conversations.find((conv) => {
+      let sortedProfiles = [...conv.profiles].sort((a, b) => a.localeCompare(b));
+      return sortedProfiles.join(",") === fullProfileIds.join(",");
+    });
+
+    if(!targetConversation){
+      this.createConversation(fullProfileIds).subscribe({
+        next: (conversation) => {
+          this.conversations.push(conversation);
+          if (useConversation) {
+            useConversation(conversation);
+          }
+        }
+      });
+      return;
+    }
+
+    if (useConversation) {
+      useConversation(targetConversation);
+    }
   }
 
   /**

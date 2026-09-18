@@ -10,6 +10,9 @@ import { ProfileService } from '../../../services/profile-service';
 import { ImagePanelComponent, ImageSelectionPurpose } from '../../Lib/image-panel-component/image-panel-component';
 import { TopBarComponent } from '../../singulars/top-bar-component/top-bar-component';
 import { ProfileDetailsComponent } from '../../singulars/profile-details-component/profile-details-component';
+import { MessagingService } from '../../../services/messaging-service';
+import { PanelManagerService } from '../../../services/panel-manager-service';
+import { AuthService } from '../../../services/auth-service';
 
 enum image_mode {
   PROFILE_PIC,
@@ -94,7 +97,9 @@ export class ProfileComponent {
     private connectionService: ConnectionService,
     private router: Router,
     private route: ActivatedRoute,
-    //private messageService: MessageService
+    private messageService: MessagingService,
+    private panelManager: PanelManagerService,
+    private authService: AuthService
   ){
     this.profileService = ps;
 
@@ -259,11 +264,15 @@ export class ProfileComponent {
 
   }
 
-  // message() {
-  //   let searchedProfile = this.profileService.searchedProfile();
-  //   if(searchedProfile)
-  //     this.messageService.setToConveration(searchedProfile.id);
-  // }
+  message() {
+    let searchedProfile = this.profileService.activeProfile();
+    
+    if(searchedProfile && searchedProfile.id != this.authService.account()?.currentAccount?.id) {
+      this.messageService.setUpConversation([searchedProfile.id], (conversation) => {
+        this.panelManager.openPanel(conversation);
+      });
+    }
+  }
 
   prepNewProfilePhoto() {
     

@@ -3,6 +3,8 @@ import { ConnectionDetails, ConnectionService } from '../../../services/conectio
 import { environment } from '../../../environment/environment';
 import { ElementItemDirective } from '../../../directives/element-item-directive';
 import { TabComponent, TabOption } from '../../Lib/tab-component/tab-component';
+import { MessagingService } from '../../../services/messaging-service';
+import { PanelManagerService } from '../../../services/panel-manager-service';
 // import { MessageService } from '../../../services/message-service';
 
 @Component({
@@ -42,15 +44,18 @@ export class ConnectionListComponent implements AfterViewInit{
 
   app: string = environment.app_name;
 
-  constructor(cs: ConnectionService
-  //  , private messageService: MessageService
+  constructor(cs: ConnectionService,
+    private messageService: MessagingService,
+    private panelManager: PanelManagerService
   ) {
     this.connectionService = cs;
   }
 
-  // prepMessage(id: string){
-  //   this.messageService.setToConveration(id);
-  // }
+  prepMessage(id: string){
+    this.messageService.setUpConversation([id], (conversation) => {
+      this.panelManager.openPanel(conversation);
+    });
+  }
 
   ngAfterViewInit(): void {
     this.prepMode();

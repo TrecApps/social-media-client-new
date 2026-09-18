@@ -15,14 +15,16 @@ import { ConnectionListComponent } from '../../repeats/connection-list-component
 import { MediaEventComponent } from '../../repeats/media-event-component/media-event-component';
 import { ContentEditorComponent } from '../../singulars/content-editor-component/content-editor-component';
 import { TopBarComponent } from '../../singulars/top-bar-component/top-bar-component';
+import { ChatPanelComponent } from '../../repeats/chat-panel-component/chat-panel-component';
+import { ChatPanelHostComponent } from '../../singulars/chat-panel-host-component/chat-panel-host-component';
 
 @Component({
   selector: 'app-home-component',
   imports: [TopBarComponent, ContentEditorComponent,
-    BottomTickerComponent,// ContentComponent,
+    BottomTickerComponent, // ContentComponent,
     MediaEventComponent,
     ElementContainerDirective, ElementItemDirective,
-    ConnectionListComponent],
+    ConnectionListComponent, ChatPanelHostComponent, ChatPanelComponent],
   templateUrl: './home-component.html',
   styleUrl: './home-component.css',
 })

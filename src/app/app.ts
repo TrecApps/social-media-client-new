@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { AuthService, LoginResult } from './services/auth-service';
 import { ConnectionService } from './services/conection-service';
 import { ProfileService } from './services/profile-service';
+import { MessagingService } from './services/messaging-service';
 
 
 interface LooseObject {
@@ -45,7 +46,7 @@ export class App implements OnDestroy , OnInit {
     private profileService: ProfileService,
     private connectionService: ConnectionService,
     // private urlService: UrlService,
-    // private messageService: MessageService,
+    private messageService: MessagingService,
     // private notificationService: NotificationService
   ){
 
@@ -56,6 +57,7 @@ export class App implements OnDestroy , OnInit {
     this.authService.attemptRefresh((res: LoginResult) => {
       this.profileService.retrieveOwnProfile();
       this.connectionService.constructList();
+      this.messageService.getConversations();
     });
   }
 
