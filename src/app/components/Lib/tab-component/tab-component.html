@@ -3,7 +3,7 @@
   [ngClass]="'element-container-' + ss.style"
   >
   <div class="tab-holder">
-    @for (tab of tabs(); track tab) {
+    @for (tab of tabs(); track tab.actTitle) {
       <div
         class="element-item"
         [ngClass]="'element-item-' + ss.style +' ' + (tab.active ? 'element-item-focus' : '')"

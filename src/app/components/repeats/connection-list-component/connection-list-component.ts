@@ -40,7 +40,7 @@ export class ConnectionListComponent implements AfterViewInit{
 
   mode: string = "follower";
 
-  imageBase: string = `${environment.image_service_url}Images/profile/`;
+  imageBase: string = `${environment.image_service_url}/Images/profile/`;
 
   app: string = environment.app_name;
 
