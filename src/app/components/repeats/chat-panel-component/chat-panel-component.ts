@@ -25,6 +25,12 @@ import {
   ConversationEvent,
   aggregateReactions,
 } from '../../../models/Messaging';
+import { ConnectionService } from '../../../services/conection-service';
+import { BasicProfile, Profile } from '../../../models/Profile';
+import { ProfileService } from '../../../services/profile-service';
+import { ElementContainerDirective } from '../../../directives/element-container-directive';
+import { ElementItemDirective } from '../../../directives/element-item-directive';
+import { environment } from '../../../environment/environment';
 
 /**
  * ChatPanelComponent
@@ -54,14 +60,33 @@ import {
  */
 @Component({
   selector: 'app-chat-panel-component',
-  imports: [CommonModule, RelativeTimePipe],
+  imports: [CommonModule, RelativeTimePipe, ElementContainerDirective, ElementItemDirective],
   templateUrl: './chat-panel-component.html',
   styleUrl: './chat-panel-component.css',
 })
-export class ChatPanelComponent {
+export class ChatPanelComponent implements OnInit {
   private readonly messagingService = inject(MessagingService);
   private readonly panelManager = inject(PanelManagerService);
   private readonly authService = inject(AuthService);
+  private readonly profileService = inject(ProfileService);
+
+  basicProfiles: WritableSignal<BasicProfile[]> = signal([]);
+
+  profileImageUrl(id: string): string {
+    return `${environment.image_service_url}/Images/profile/${id}?app=${environment.app_name}`;
+  }
+
+  get otherProfileNames() : string {
+    let currentProfile = this.authService.currentAccountId;
+    let otherProfiles = this.basicProfiles().filter((profile) => profile.id != currentProfile);
+    return otherProfiles.map((profile) => profile.displayName).join(', ');
+  }
+
+  profileDisplayName(id: string) : string {
+    if(id == this.authService.currentAccountId) return this.authService.currentDisplayName;
+    let profile = this.basicProfiles().find((p) => p.id === id);
+    return profile ? profile.displayName : '';
+  }
 
   /**
    * The conversation this panel displays. Required input supplied by
@@ -245,6 +270,22 @@ export class ChatPanelComponent {
     //
     // Validates: Requirements 6.1 (subscription happens on open)
     this.messagingService.subscribe(this.conversationId);
+
+    // Load the profiles involved in this conversation for display in the header. This is a convenience for the host to avoid having to load them separately.
+    for (let profile of this.conversation.profiles) {
+      if(this.authService.currentAccountId == profile) continue; // Skip the current user's profile
+      this.profileService.retrieveProfile(profile).subscribe({
+        next: (p1: Profile) => {
+          let newBasicProfile: BasicProfile = {
+            id: p1.id,
+            displayName: p1.title,
+            shortAboutMe: p1.aboutMeShort,
+            pronouns: p1.pronouns
+          };
+          this.basicProfiles.update((current) => [...current, newBasicProfile]);
+        }
+      });
+    }
 
     // Listen for ConversationEvents delivered for this conversation and dispatch
     // each by its `eventType` to the appropriate handler.

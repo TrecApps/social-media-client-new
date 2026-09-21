@@ -16,7 +16,7 @@
     [class.chat-panel__header--focused]="isFocused"
   >
     <span class="chat-panel__title" title="{{ conversationId }}">
-      {{ conversationId }}
+      {{ otherProfileNames }}
     </span>
     <button
       class="chat-panel__close"
@@ -33,6 +33,7 @@
     #messageList
     class="chat-panel__messages"
     (scroll)="onScroll()"
+    appElementContainerDirective
   >
     <!-- Top pagination loading indicator (Req 4.5) -->
     @if (loadingMore()) {
@@ -58,10 +59,14 @@
 
       <!-- Messages in chronological order: oldest at top, newest at bottom (Req 4.3) -->
       @for (message of messages(); track message.id) {
-        <div class="chat-panel__message">
+        <div class="chat-panel__message" app appElementItemDirective>
+          
           <div class="chat-panel__message-meta">
+            <div class="message-profile-pic">
+              <img [src]="profileImageUrl(message.profile)">
+            </div>
             <span class="chat-panel__message-author" title="{{ message.profile }}">
-              {{ message.profile }}
+              {{ profileDisplayName(message.profile) }}
             </span>
             <span class="chat-panel__message-time">
               {{ message.firstMade | relativeTime }}

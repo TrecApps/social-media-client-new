@@ -489,3 +489,15 @@
   border-color: rgba(255, 255, 255, 0.5);
   border-top-color: #fff;
 }
+
+.message-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.message-profile-pic img {
+  height: 100%;
+  width: 100%;
+}
