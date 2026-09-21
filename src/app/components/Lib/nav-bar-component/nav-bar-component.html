@@ -7,7 +7,7 @@
     }
 
     <div class="nav-section">
-      @for (navOption of navOptions | nav:BASIC_DESKTOP:BASIC_DESK_NO_MOB; track navOption) {
+      @for (navOption of navOptions() | nav:BASIC_DESKTOP:BASIC_DESK_NO_MOB; track navOption) {
         <li
           class="nav-item" [ngClass]="iconClass"
           style="padding-left:5px;"
@@ -34,7 +34,7 @@
     </div>
 
     <div class="icon-section">
-      @for (navOption of navOptions | nav:OPTION_DESKTOP:OPTION_DESK_NO_MOB; track navOption) {
+      @for (navOption of navOptions() | nav:OPTION_DESKTOP:OPTION_DESK_NO_MOB; track navOption) {
         <div class="icon-holder"  [ngClass]="iconClass"
           (click)="onIconClick(navOption)"
           (mouseenter)="onIconHover(navOption, true)"
@@ -130,7 +130,7 @@
 
 
   <div class="bottom-bar" [style]="'zIndex:' + zIndex" [ngClass]="'element-container-' + styleService.style">
-    @for (navOption of navOptions | nav:BASIC_DESKTOP:OPTION_DESKTOP:ONLY_MOBILE; track navOption) {
+    @for (navOption of navOptions() | nav:BASIC_DESKTOP:OPTION_DESKTOP:ONLY_MOBILE; track navOption) {
       <div
         class="bottom-bar-holder"
         [ngClass]="iconClass"

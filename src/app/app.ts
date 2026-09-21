@@ -5,6 +5,7 @@ import { AuthService, LoginResult } from './services/auth-service';
 import { ConnectionService } from './services/conection-service';
 import { ProfileService } from './services/profile-service';
 import { MessagingService } from './services/messaging-service';
+import { NotificationService } from './services/notification-service';
 
 
 interface LooseObject {
@@ -47,7 +48,7 @@ export class App implements OnDestroy , OnInit {
     private connectionService: ConnectionService,
     // private urlService: UrlService,
     private messageService: MessagingService,
-    // private notificationService: NotificationService
+    private notificationService: NotificationService
   ){
 
     
@@ -58,12 +59,13 @@ export class App implements OnDestroy , OnInit {
       this.profileService.retrieveOwnProfile();
       this.connectionService.constructList();
       this.messageService.getConversations();
+      this.notificationService.initiateNotificationPolling();
     });
   }
 
 
     ngOnDestroy(): void {
     // this.routeSubscription.unsubscribe();
-    // this.notificationService.stopPolling();
+    this.notificationService.stopPolling();
   }
 }

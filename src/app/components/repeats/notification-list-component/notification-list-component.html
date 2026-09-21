@@ -1,0 +1,20 @@
+<div 
+    appElementContainer 
+    class="notification-container"
+>
+
+    @for(notification of notificationService.notifications() | notify:useNotifyFilter; track notification){
+        <div appElementItem class="notification-item" (mouseover)="onHoverNotification(notification)">
+            <div class="notification-pic" (click)="onClickNotification(notification)">
+                <img [src]="getImageUrl(notification)">
+            </div>
+            <div class="notification" (click)="onClickNotification(notification)">
+                <p>{{ trimMessage(notification.post.message) }}</p>
+            </div>
+            <!-- <div class="notify-exit" (click)="onDeleteNotification(notification)">
+                <img src="assets/X-image.png">
+            </div> -->
+        </div>
+    }
+
+</div>

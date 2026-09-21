@@ -1,0 +1,71 @@
+
+
+.full-notification-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.contained-notification-container {
+    overflow-y: scroll;
+    width: 300px;
+    height: 450px;
+}
+
+.notification-container {
+    overflow-y: scroll;
+}
+
+@media (max-width: 767px){
+    .notification-container {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .notification-container {
+        width: 300px;
+        height: 450px;
+    }
+}
+
+.notification-item {
+    display: flex;
+    height: 60px;
+    padding: 5px;
+}
+
+.notification-pic {
+    width: 50px;
+}
+
+.notification-pic img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.notification {
+    flex-grow: 1;
+}
+
+.notification p {
+    margin: 0;
+}
+
+.notify-exit {
+    transition: background-color 0.5s;
+    width: 50px;
+    background-color: rgba(255, 255, 255, 0.3);
+    height: 100%;
+}
+
+.notify-exit:hover {
+    background-color: red;
+}
+
+.notify-exit img {
+    width: 100%;
+    height: 100%;
+}

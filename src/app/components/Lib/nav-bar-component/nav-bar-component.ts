@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, input, Input, InputSignal, model, ModelSignal, Output, ViewChild } from '@angular/core';
 import { NavProfilePipe, ProfileItem } from '../../../pipes/nav-profile-pipe-pipe';
 import { CommonModule } from '@angular/common';
 import { ElementContainerDirective } from '../../../directives/element-container-directive';
@@ -33,8 +33,7 @@ export class NavBarComponent {
   OPTION_DESK_NO_MOB = NavOptionShow.OPTION_DESK_NO_MOB;  // Like "OPTION_DESKTOP", but don't show in mobile mode
   ONLY_MOBILE = NavOptionShow.ONLY_MOBILE;                // Only show in mobile mode
 
-  @Input()
-  navOptions: NavOption[] = [];
+  navOptions: ModelSignal<NavOption[]> = model([] as NavOption[]);
 
   @Input()
   logoSrc: string | undefined;
@@ -135,10 +134,12 @@ export class NavBarComponent {
   }
 
   onIconClick(option: NavOption){
-    for(let curOption of this.navOptions){
-      curOption.isFocusing = false;
+    let navOptions = [...this.navOptions()];
+    for(let curOption of navOptions){
+      curOption.isFocusing = curOption.title == option.title && curOption.displayText == option.displayText;
     }
-    option.isFocusing = true;
+
+    this.navOptions.set(navOptions);
 
     this.onNav.emit({
       title: option.title,

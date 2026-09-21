@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild, WritableSignal } from '@angular/core';
 import { NavBarComponent, NavClickDetails, ProfileItemGroup } from '../../Lib/nav-bar-component/nav-bar-component';
 import { PopupComponent } from '../../Lib/popup-component/popup-component';
 import { ColorOption, ColorPanelComponent } from '../color-panel/color-panel.component';
@@ -12,10 +12,12 @@ import { NavOption, NavOptionShow } from '../../../pipes/nav-pipe';
 import { AuthService } from '../../../services/auth-service';
 import { StylesService } from '../../../services/styles-service';
 import { SearchBarComponent } from '../search-bar-component/search-bar-component';
+import { NotificationListComponent } from '../../repeats/notification-list-component/notification-list-component';
+import { NotificationService } from '../../../services/notification-service';
 
 @Component({
   selector: 'app-top-bar-component',
-  imports: [CommonModule, SearchBarComponent, //NotificationListComponent,
+  imports: [CommonModule, SearchBarComponent, NotificationListComponent,
     NavBarComponent, PopupComponent, ColorPanelComponent],
   templateUrl: './top-bar-component.html',
   styleUrl: './top-bar-component.css',
@@ -23,7 +25,7 @@ import { SearchBarComponent } from '../search-bar-component/search-bar-component
 export class TopBarComponent {
     authService: AuthService;
 
-  navOptions: NavOption[];
+  navOptions: WritableSignal<NavOption[]> = signal([]);
 
   imageProfile: string = `${environment.image_service_url}/Images/profile/`;
   baseUsersUrl: string = `${environment.user_service_url}/Users/`;
@@ -140,7 +142,7 @@ export class TopBarComponent {
 
   updateSignal: Subscription | undefined;
 
-  showNotifications: boolean = false;
+  showNotifications: WritableSignal<boolean> = signal(false);
   useNotifyFilter: string = "";
 
   constructor(
@@ -148,13 +150,13 @@ export class TopBarComponent {
     private router:Router, 
     ss: StylesService, 
     private client: HttpClient,
-    // private notificationService: NotificationService,
+    private notificationService: NotificationService,
     // private messageService: MessageService
   ){
     this.authService = authService;
     this.ss = ss;
 
-    this.navOptions = [
+    this.navOptions.set([
       // Basic routing
       {
         displayText: 'Home',
@@ -198,24 +200,26 @@ export class TopBarComponent {
         focusImg: 'assets/icons/b-bell.png',
         notifyCount: 0
       }
-    ]
+    ]);
   }
   ngOnDestroy(): void {
     if(this.notifyOff) this.notifyOff.unsubscribe();
     if(this.updateSignal) this.updateSignal.unsubscribe();
   }
 
-  retrieveNavOption(title: string): NavOption | undefined {
-    for(let opt of this.navOptions){
+  retrieveNavOption(title: string, options: NavOption[]): NavOption | undefined {
+    for(let opt of options){
       if(opt.title == title) return opt;
     }
     return undefined;
   }
 
   resetNavOptionNotifyCount(){
-    for(let opt of this.navOptions){
+    let navOptions = [...this.navOptions()];
+    for(let opt of navOptions){
       opt.notifyCount = 0;
     }
+    this.navOptions.set(navOptions);
   }
 
   notifyOff: Subscription | undefined;
@@ -224,44 +228,48 @@ export class TopBarComponent {
     // // Know when a notification is clicked to turn off
     // this.notifyOff = this.notificationService.onNotificationClicked.subscribe(() => this.showNotifications = false);
 
-    // this.updateSignal = this.notificationService.onNotificationCounted.subscribe((notificationCounts: Map<string, number>) => {
-    //   this.resetNavOptionNotifyCount();
+    this.updateSignal = this.notificationService.onNotificationCounted.subscribe((notificationCounts: Map<string, number>) => {
+      this.resetNavOptionNotifyCount();
 
-    //   notificationCounts.forEach((count: number, category: string) => {
-    //     let c = category.toLowerCase();
-    //     let navOption: NavOption | undefined;
-    //     if(c == "message"){
-    //       navOption = this.retrieveNavOption("message");
-    //     } else if(c == "connect"){
-    //       navOption = this.retrieveNavOption("connect");
-    //     }
-    //     // ToDo - additional categories depending on the usique app
+      let navOptions = this.navOptions();
 
-    //     // End ToDo
-    //     else {
-    //       navOption = this.retrieveNavOption("notify");
-    //     }
+      notificationCounts.forEach((count: number, category: string) => {
+        let c = category.toLowerCase();
+        let navOption: NavOption | undefined;
+        if(c == "message"){
+          navOption = this.retrieveNavOption("message", navOptions);
+        } else if(c == "connect"){
+          navOption = this.retrieveNavOption("connect", navOptions);
+        }
+        // ToDo - additional categories depending on the usique app
+
+        // End ToDo
+        else {
+          navOption = this.retrieveNavOption("notify", navOptions);
+        }
 
 
-    //     if(navOption) {
-    //       if(!navOption.notifyCount) navOption.notifyCount = 0;
-    //       navOption.notifyCount += count;
-    //     }
-    //   });
-    // })
+        if(navOption) {
+          if(!navOption.notifyCount) navOption.notifyCount = 0;
+          navOption.notifyCount += count;
+        }
+      });
+
+      this.navOptions.set(navOptions);
+    })
   }
 
 
 
   onNavigate(details: NavClickDetails){
-    this.showNotifications = true;
+    this.showNotifications.set(true);
 
     if(details.title == 'connect' || details.title == 'message'){
       this.useNotifyFilter = details.title;
     } else if(details.title == 'notify') {
       this.useNotifyFilter = "";
     } else {
-      this.showNotifications = false;
+      this.showNotifications.set(false);
       this.router.navigateByUrl('/' + (details.navLink || details.title));
     }
   }

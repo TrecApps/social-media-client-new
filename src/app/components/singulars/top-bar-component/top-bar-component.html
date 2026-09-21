@@ -1,6 +1,6 @@
 <app-nav-bar-component
   #navBar
-  [navOptions]="navOptions"
+  [(navOptions)]="navOptions"
   (onNav)="onNavigate($event)"
   (onLoginRequestEmitter)="prepLogin()"
   [basicImageUrl]="imageProfile"
@@ -39,10 +39,10 @@
 }
 
 
-<!-- @if(showNotifications) {
-  <app-popup (onClose)="showNotifications = false">
+@if(showNotifications()) {
+  <app-popup-component (onClose)="showNotifications.set(false)">
     <app-notification-list-component [useNotifyFilter]="useNotifyFilter" />
-  </app-popup>
-} -->
+  </app-popup-component>
+} 
 
   <div class="buffer-bar"></div>
