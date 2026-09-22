@@ -47,6 +47,17 @@ export class TopBarComponent {
     }, {
       itemList: [
         {
+          item: 'userDash',
+          displayItem: 'User Dashboard'
+        }, 
+        {
+          item: 'sessions',
+          displayItem: 'Account Sessions'
+        }
+      ]
+    },{
+      itemList: [
+        {
           item: 'logout',
           displayItem: 'Logout'
         }
@@ -61,25 +72,29 @@ export class TopBarComponent {
     if(item == 'logout'){
       this.authService.logout();
     } else if(item == 'cStyle'){
-      this.showStylePopup = true;
+      this.showStylePopup.set(true);
     } else if(item == 'brand'){
       this.navBar.onFocusBrands();
+    } else if(item == 'userDash'){
+      window.open(`${environment.user_frontend_url}/user`, '_blank')
+    } else if(item == 'sessions'){
+      window.open(`${environment.user_frontend_url}/sessions`, '_blank')
     }
   }
 
-  showStylePopup: boolean = false;
-  styleUpdating: boolean = false;
+  showStylePopup: WritableSignal<boolean> = signal(false);
+  styleUpdating: WritableSignal<boolean> = signal(false);
 
   updateStyle(){
 
-    if(this.styleUpdating) return;
-      this.styleUpdating = true;
+    if(this.styleUpdating()) return;
+      this.styleUpdating.set(true);
 
     let targetStyle = this.ss.style();
     if(targetStyle.startsWith('dark-'))
       targetStyle = targetStyle.substring(5);
 
-    this.client.patch<ResponseObj>(`${environment.user_service_url}Users/styles`, {
+    this.client.patch<ResponseObj>(`${environment.user_service_url}/accounts/styles`, {
         style: targetStyle,
         useDark: this.ss.isDark
     
@@ -87,12 +102,12 @@ export class TopBarComponent {
       params: new HttpParams().append("app", environment.app_name)
     }).subscribe({
       next: (val: ResponseObj) => {
-        this.styleUpdating = false;
-        this.colorChanged = false;
+        this.styleUpdating.set(false);
+        this.colorChanged.set(false);
       },
       error: ()=> {
-        this.styleUpdating = false;
-        this.colorChanged = false;
+        this.styleUpdating.set(false);
+        this.colorChanged.set(false);
       }
     })
   }
@@ -125,15 +140,15 @@ export class TopBarComponent {
     }
   ]
 
-  colorChanged: boolean = false;
+  colorChanged: WritableSignal<boolean> = signal(false);
 
   onColorSelect(styleColor: string){
     this.ss.setStyle(styleColor);
-    this.colorChanged = true;
+    this.colorChanged.set(true);
   }
   onUseDarkChecked(event: Event) {
     const checkbox = event.target as HTMLInputElement;
-    this.colorChanged = true;
+    this.colorChanged.set(true);
 
     this.ss.setDarkMode(checkbox.checked);
   }

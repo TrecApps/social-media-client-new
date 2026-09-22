@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { AuthService } from '../../../services/auth-service';
 import { FormsModule } from '@angular/forms';
 import { AuthAttempt, AuthMethodType, AuthRecordPublic } from '../../../models/account';
@@ -117,6 +117,19 @@ export class LoginComponent implements OnInit, AfterViewInit{
       }
       return entry1;
     }))
+  }
+
+  @HostListener('keydown.enter')
+  handleEnterKey() {
+    if(!this.authMethodEntries()){
+      if(this.username().trim().length) {
+        this.submitUsername()
+      }
+    } else {
+      if(this.loginReady){
+        this.submitLogin();
+      }
+    }
   }
 
 
