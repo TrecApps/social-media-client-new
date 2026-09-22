@@ -13,6 +13,8 @@ export const environment = {
     // notifications_url: "http://localhost:4200/mn-api",
     // message_service_ws_url: "ws://localhost:4200/mn-api",
 
+    user_frontend_url: "https://test.trecapps.com/users",
+
     user_service_url: "https://test.trecapps.com/User-api",
     image_service_url: "https://test.trecapps.com/Image-man-api",
     sm_profile_url: 'https://test.trecapps.com/sm-api/',
