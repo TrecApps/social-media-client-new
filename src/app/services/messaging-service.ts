@@ -284,7 +284,7 @@ export class MessagingService {
 
   private _socket: WebSocket | null = null;
 
-  private readonly _url = `${environment.message_service_ws_url}/ws`;
+  private readonly _url = `${environment.message_service_ws_url}/ws/`;
 
   // -------------------------------------------------------------------------
   // Conversation-level update stream (used by ConversationListPageComponent)
