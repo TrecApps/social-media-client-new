@@ -1052,7 +1052,10 @@ export class ChatPanelComponent implements OnInit {
    * Validates: Requirements 8.1, 8.2, 8.3 (Property 10, 11)
    */
   private _handleSeen(event: ConversationEvent): void {
-    const ids = this._asStringList(event.payload);
+    let ids = this._asStringList(event.payload);
+    if(!ids){
+      ids = this._asStringList2(event.payload);
+    }
     if (!ids) {
       // Absent or unparseable payload: log and do not modify seen indicators.
       //
@@ -1220,6 +1223,19 @@ export class ChatPanelComponent implements OnInit {
     if (!Array.isArray(payload)) return null;
     if (!payload.every((item) => typeof item === 'string')) return null;
     return payload as string[];
+  }
+
+  /**
+   * Version that checks to see if the payload might be in one of the elements
+   * @param payload 
+   */
+  private _asStringList2(payload: ConversationEvent['payload']): string[] | null {
+    if (!Array.isArray(payload)) return null;
+    for(let element of payload){
+      let result = this._asStringList(payload);
+      if(result) return result;
+    }
+    return null;
   }
 
   /**
