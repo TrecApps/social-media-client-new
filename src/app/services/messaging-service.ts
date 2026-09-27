@@ -448,6 +448,7 @@ export class MessagingService {
     let socket: WebSocket;
     try {
       socket = new WebSocket(this._url);
+      console.log(`Attempting connection to ${this._url}`);
     } catch (err) {
       console.error('[WebSocketService] Failed to open WebSocket:', err);
       this._onSocketClosed();
@@ -457,7 +458,7 @@ export class MessagingService {
 
     socket.onopen = (ev: Event) => this._onOpen(ev);
     socket.onmessage = (ev) => this._onMessage(ev);
-    socket.onerror = () => {
+    socket.onerror = (ev: Event) => {
       // The browser fires `error` then `close`; reconnection is driven by close.
       console.error('[WebSocketService] WebSocket error');
     };
