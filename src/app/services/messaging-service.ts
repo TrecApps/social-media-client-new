@@ -455,7 +455,7 @@ export class MessagingService {
     }
     this._socket = socket;
 
-    socket.onopen = () => this._onOpen();
+    socket.onopen = (ev: Event) => this._onOpen(ev);
     socket.onmessage = (ev) => this._onMessage(ev);
     socket.onerror = () => {
       // The browser fires `error` then `close`; reconnection is driven by close.
@@ -464,11 +464,13 @@ export class MessagingService {
     socket.onclose = () => this._onSocketClosed();
   }
 
-  private _onOpen(): void {
+  private _onOpen(ev: Event): void {
     this._attempt = 0;
     this._clearQueueTimeout();
     this._setStatus('CONNECTED');
     this._drainPendingQueue();
+    console.log('🚀 WebSocket connection established:', ev);
+    console.log(`Attempting connection to ${this._url}`);
   }
 
   private _onSocketClosed(): void {
