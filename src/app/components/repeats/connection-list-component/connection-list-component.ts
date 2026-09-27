@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ConnectionDetails, ConnectionService } from '../../../services/conection-service';
 import { environment } from '../../../environment/environment';
 import { ElementItemDirective } from '../../../directives/element-item-directive';
@@ -13,7 +13,7 @@ import { PanelManagerService } from '../../../services/panel-manager-service';
   templateUrl: './connection-list-component.html',
   styleUrl: './connection-list-component.css'
 })
-export class ConnectionListComponent implements AfterViewInit{
+export class ConnectionListComponent implements AfterViewInit, OnInit, OnDestroy{
 
   connectionDetails: ConnectionDetails[] = [];
 
@@ -49,6 +49,12 @@ export class ConnectionListComponent implements AfterViewInit{
     private panelManager: PanelManagerService
   ) {
     this.connectionService = cs;
+  }
+  ngOnDestroy(): void {
+    this.messageService.disconnect();
+  }
+  ngOnInit(): void {
+    this.messageService.connect();
   }
 
   prepMessage(id: string){
