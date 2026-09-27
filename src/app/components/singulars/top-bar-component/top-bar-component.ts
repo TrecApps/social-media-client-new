@@ -91,12 +91,13 @@ export class TopBarComponent {
       this.styleUpdating.set(true);
 
     let targetStyle = this.ss.style();
-    if(targetStyle.startsWith('dark-'))
+    let useDark = targetStyle.startsWith('dark-');
+    if(useDark)
       targetStyle = targetStyle.substring(5);
 
     this.client.patch<ResponseObj>(`${environment.user_service_url}/accounts/styles`, {
         style: targetStyle,
-        useDark: this.ss.isDark
+        useDark
     
     }, {
       params: new HttpParams().append("app", environment.app_name)
