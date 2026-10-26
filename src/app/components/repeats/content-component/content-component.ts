@@ -87,7 +87,7 @@ export class ContentComponent implements OnInit {
 
   }
 
-  reactions: RObjectMap = {}
+  reactions: WritableSignal<RObjectMap> = signal({});
 
   getContentPoster(): string {
     return this.content().posting.posterId || this.content().posting.ownerId || '';
@@ -130,6 +130,10 @@ export class ContentComponent implements OnInit {
         replies.forEach((reply: Posting) => {
           this.profileService.addFullPostingToList(this.content().replies, reply);
         })
+        this.content.set({
+          ...this.content(),
+          replies: this.content().replies
+        });
       }, error: () => this.retrievingReplies.set(false)
     })
   }
@@ -139,7 +143,7 @@ export class ContentComponent implements OnInit {
 
     let reactStats = obj.reactStats;
     this.activeReaction.set(reactStats.yourReaction || '');
-    this.reactions = reactStats.reactions;
+    this.reactions.set(reactStats.reactions);
   }
 
   reactionOnSelect(event: ReactionEvent){
@@ -153,6 +157,6 @@ export class ContentComponent implements OnInit {
 
   getReactionInt(reaction: string): number {
     
-    return Number.parseInt(this.reactions[reaction]?.toString()) || 0;
+    return Number.parseInt(this.reactions()[reaction]?.toString()) || 0;
   }
 }
